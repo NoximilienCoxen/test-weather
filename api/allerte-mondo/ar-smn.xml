@@ -1,97 +1,29 @@
-<!DOCTYPE html>
-<html>
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://ssl.smn.gob.ar/CAP/estilo_ar.xsl"?>
 
-<head>
+<rss xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 
-<meta charset="UTF-8">
+<channel>
 
+<title>Ultimos Avisos publicados por el Servicio Meteorologico Nacional (SMN) de Argentina</title>
 
-<title>RSS CAP SMN</title>
+<link>https://ssl.smn.gob.ar/CAP/AR.php</link>
 
-<style>
+<description>Ultimos Avisos publicados por el Servicio Meteorologico Nacional (SMN) de Argentina</description>
 
-body{
-    font-family:Arial, Helvetica, sans-serif;
-    background:#f2f2f2;
-    margin:20px;
-}
+<dc:publisher>Servicio Meteorologico Nacional (SMN) de Argentina</dc:publisher>
 
-h1{
-    background:#005baa;
-    color:white;
-    padding:15px;
-    border-radius:5px;
-}
+<language>es</language>
 
-.item{
-    background:white;
-    border-left:6px solid #005baa;
-    padding:15px;
-    margin-bottom:15px;
-    border-radius:5px;
-    box-shadow:0 2px 4px rgba(0,0,0,0.1);
-}
+<copyright>Copyright 2025 SMN | Derechos de autor, Servicio Meteorologico Nacional (SMN). Licencia CC BY 4.0.</copyright>
 
-.titulo{
-    font-size:22px;
-    font-weight:bold;
-    color:#005baa;
-}
+<atom:link href="https://ssl.smn.gob.ar/CAP/AR.php" rel="self" type="application/rss+xml"/>
 
-.fecha{
-    color:#666;
-    font-size:12px;
-    margin-top:8px;
-}
+<pubDate>Fri, 27 Nov 2026 09:22:39 GMT</pubDate>
 
-.descripcion{
-    margin-top:12px;
-    line-height:1.5;
-    color:#222;
-}
-
-.link{
-    margin-top:15px;
-}
-
-.link a{
-    background:#cc0000;
-    color:white;
-    padding:8px 12px;
-    border-radius:4px;
-    text-decoration:none;
-    font-size:14px;
-    font-weight:bold;
-}
-
-.link a:hover{
-    background:#990000;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>Servicio Meteorologico Nacional - RSS CAP</h1>
+<lastBuildDate>Fri, 27 Nov 2026 09:22:39 GMT</lastBuildDate>
 
 
+</channel>
 
-<div class="item">
-
-<div class="titulo">Sin Avisos Meteorologicos</div>
-
-<div class="descripcion">No se han emitido Avisos Meteorologicos en la REPUBLICA ARGENTINA</div>
-
-</div>
-
-
-
-
-
-
-
-<script>window.__CF$cv$params={r:'a60fea7d1f3b83b0',t:'MTc5NTc2OTc0OA==',u:'01a21c37ca437769860dbc033b1ebcea',ut:'zJwkTxU27GuMUJeCdcPecmZHr15RcLo6x54J6Bre8SU-1795769748-1.2.1.1-h6j5oqYtWCLi79pOCYtamFtNl4B5EghvUpbKE9UajPsmrIiEgGWYQJDuGQAmyjWDJDiRrwfzUorSmf6cVBFV82Uu5bR6HmftvVvglet00zM',i:60};(function(){if(!document.body)return;var l=window.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/precursor/main.js?ray=a60fea7d1f3b83b0',s=document.createElement('script');s.src=o?new URL(u,o).href:u;document.head.appendChild(s);})();</script></body>
-</html>
-
+</rss>

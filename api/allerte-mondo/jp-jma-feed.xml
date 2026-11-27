@@ -2,8 +2,8 @@
 <feed xmlns="http://www.w3.org/2005/Atom" lang="ja">
   <title>高頻度（随時）</title>
   <subtitle>JMAXML publishing feed</subtitle>
-  <updated>2026-11-27T17:43:00+09:00</updated>
-  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1795768980</id>
+  <updated>2026-11-27T18:07:07+09:00</updated>
+  <id>https://www.data.jma.go.jp/developer/xml/feed/extra.xml#short_1795770427</id>
   <link rel="related" href="https://www.jma.go.jp/"/>
   <link rel="self" href="https://www.data.jma.go.jp/developer/xml/feed/extra.xml"/>
   <link rel="hub" href="http://alert-hub.appspot.com/"/>
@@ -13,13 +13,33 @@
 ]]></rights>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127084247_0_VPWW54_160000.xml</id>
-    <updated>2026-11-27T08:42:46Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127090644_0_VPWW54_220000.xml</id>
+    <updated>2026-11-27T09:06:43Z</updated>
     <author>
-      <name>富山地方気象台</name>
+      <name>静岡地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127084247_0_VPWW54_160000.xml"/>
-    <content type="text">【富山県気象警報・注意報】注意報を解除します。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127090644_0_VPWW54_220000.xml"/>
+    <content type="text">【静岡県気象警報・注意報】静岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127090644_0_VPWW53_220000.xml</id>
+    <updated>2026-11-27T09:06:43Z</updated>
+    <author>
+      <name>静岡地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127090644_0_VPWW53_220000.xml"/>
+    <content type="text">【静岡県気象警報・注意報】静岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127090637_0_VPWW61_220000.xml</id>
+    <updated>2026-11-27T09:06:36Z</updated>
+    <author>
+      <name>静岡地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127090637_0_VPWW61_220000.xml"/>
+    <content type="text">【静岡県雷注意報】静岡県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -29,6 +49,16 @@
       <name>富山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127084247_0_VPWW53_160000.xml"/>
+    <content type="text">【富山県気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127084247_0_VPWW54_160000.xml</id>
+    <updated>2026-11-27T08:42:46Z</updated>
+    <author>
+      <name>富山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127084247_0_VPWW54_160000.xml"/>
     <content type="text">【富山県気象警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
@@ -42,16 +72,6 @@
     <content type="text">【富山県乾燥注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075826_0_VPWW54_472000.xml</id>
-    <updated>2026-11-27T07:58:25Z</updated>
-    <author>
-      <name>南大東島地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075826_0_VPWW54_472000.xml"/>
-    <content type="text">【大東島地方気象警報・注意報】大東島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075826_0_VPWW53_472000.xml</id>
     <updated>2026-11-27T07:58:25Z</updated>
@@ -59,6 +79,16 @@
       <name>南大東島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075826_0_VPWW53_472000.xml"/>
+    <content type="text">【大東島地方気象警報・注意報】大東島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075826_0_VPWW54_472000.xml</id>
+    <updated>2026-11-27T07:58:25Z</updated>
+    <author>
+      <name>南大東島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075826_0_VPWW54_472000.xml"/>
     <content type="text">【大東島地方気象警報・注意報】大東島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -82,16 +112,6 @@
     <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075825_0_VPWW54_471000.xml</id>
-    <updated>2026-11-27T07:58:24Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075825_0_VPWW54_471000.xml"/>
-    <content type="text">【沖縄本島地方気象警報・注意報】本島北部では、土砂災害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075825_0_VPWW53_471000.xml</id>
     <updated>2026-11-27T07:58:24Z</updated>
@@ -102,14 +122,14 @@
     <content type="text">【沖縄本島地方気象警報・注意報】本島北部では、土砂災害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075823_0_VPWW53_360000.xml</id>
-    <updated>2026-11-27T07:58:21Z</updated>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075825_0_VPWW54_471000.xml</id>
+    <updated>2026-11-27T07:58:24Z</updated>
     <author>
-      <name>徳島地方気象台</name>
+      <name>沖縄気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075823_0_VPWW53_360000.xml"/>
-    <content type="text">【徳島県気象警報・注意報】徳島県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075825_0_VPWW54_471000.xml"/>
+    <content type="text">【沖縄本島地方気象警報・注意報】本島北部では、土砂災害に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -119,6 +139,16 @@
       <name>徳島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075823_0_VPWW54_360000.xml"/>
+    <content type="text">【徳島県気象警報・注意報】徳島県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075823_0_VPWW53_360000.xml</id>
+    <updated>2026-11-27T07:58:21Z</updated>
+    <author>
+      <name>徳島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075823_0_VPWW53_360000.xml"/>
     <content type="text">【徳島県気象警報・注意報】徳島県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -142,16 +172,6 @@
     <content type="text">【高知県気象警報・注意報】高知県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075819_0_VPWW54_460100.xml</id>
-    <updated>2026-11-27T07:58:18Z</updated>
-    <author>
-      <name>鹿児島地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075819_0_VPWW54_460100.xml"/>
-    <content type="text">【鹿児島県（奄美地方を除く）気象警報・注意報】薩摩、大隅地方では、強風に注意してください。薩摩、大隅、種子島・屋久島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075819_0_VPWW53_460100.xml</id>
     <updated>2026-11-27T07:58:18Z</updated>
@@ -159,6 +179,16 @@
       <name>鹿児島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075819_0_VPWW53_460100.xml"/>
+    <content type="text">【鹿児島県（奄美地方を除く）気象警報・注意報】薩摩、大隅地方では、強風に注意してください。薩摩、大隅、種子島・屋久島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075819_0_VPWW54_460100.xml</id>
+    <updated>2026-11-27T07:58:18Z</updated>
+    <author>
+      <name>鹿児島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075819_0_VPWW54_460100.xml"/>
     <content type="text">【鹿児島県（奄美地方を除く）気象警報・注意報】薩摩、大隅地方では、強風に注意してください。薩摩、大隅、種子島・屋久島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -202,16 +232,6 @@
     <content type="text">【長崎県気象警報・注意報】北部、壱岐・対馬では、強風に注意してください。長崎県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075815_0_VPWW54_440000.xml</id>
-    <updated>2026-11-27T07:58:14Z</updated>
-    <author>
-      <name>大分地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075815_0_VPWW54_440000.xml"/>
-    <content type="text">【大分県気象警報・注意報】大分県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075815_0_VPWW53_440000.xml</id>
     <updated>2026-11-27T07:58:14Z</updated>
@@ -222,14 +242,14 @@
     <content type="text">【大分県気象警報・注意報】大分県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075814_0_VPWW53_410000.xml</id>
-    <updated>2026-11-27T07:58:13Z</updated>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075815_0_VPWW54_440000.xml</id>
+    <updated>2026-11-27T07:58:14Z</updated>
     <author>
-      <name>佐賀地方気象台</name>
+      <name>大分地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075814_0_VPWW53_410000.xml"/>
-    <content type="text">【佐賀県気象警報・注意報】北部では、強風に注意してください。佐賀県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075815_0_VPWW54_440000.xml"/>
+    <content type="text">【大分県気象警報・注意報】大分県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -239,6 +259,16 @@
       <name>佐賀地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075814_0_VPWW54_410000.xml"/>
+    <content type="text">【佐賀県気象警報・注意報】北部では、強風に注意してください。佐賀県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075814_0_VPWW53_410000.xml</id>
+    <updated>2026-11-27T07:58:13Z</updated>
+    <author>
+      <name>佐賀地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075814_0_VPWW53_410000.xml"/>
     <content type="text">【佐賀県気象警報・注意報】北部では、強風に注意してください。佐賀県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -262,16 +292,6 @@
     <content type="text">【福岡県気象警報・注意報】福岡、北九州地方では、強風に注意してください。福岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075811_0_VPWW54_290000.xml</id>
-    <updated>2026-11-27T07:58:10Z</updated>
-    <author>
-      <name>奈良地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075811_0_VPWW54_290000.xml"/>
-    <content type="text">【奈良県気象警報・注意報】奈良県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075811_0_VPWW53_290000.xml</id>
     <updated>2026-11-27T07:58:10Z</updated>
@@ -279,6 +299,16 @@
       <name>奈良地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075811_0_VPWW53_290000.xml"/>
+    <content type="text">【奈良県気象警報・注意報】奈良県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075811_0_VPWW54_290000.xml</id>
+    <updated>2026-11-27T07:58:10Z</updated>
+    <author>
+      <name>奈良地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075811_0_VPWW54_290000.xml"/>
     <content type="text">【奈良県気象警報・注意報】奈良県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -322,16 +352,6 @@
     <content type="text">【大阪府気象警報・注意報】大阪府では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075807_0_VPWW53_280000.xml</id>
-    <updated>2026-11-27T07:58:06Z</updated>
-    <author>
-      <name>神戸地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075807_0_VPWW53_280000.xml"/>
-    <content type="text">【兵庫県気象警報・注意報】南部では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075807_0_VPWW54_280000.xml</id>
     <updated>2026-11-27T07:58:06Z</updated>
@@ -339,6 +359,16 @@
       <name>神戸地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075807_0_VPWW54_280000.xml"/>
+    <content type="text">【兵庫県気象警報・注意報】南部では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075807_0_VPWW53_280000.xml</id>
+    <updated>2026-11-27T07:58:06Z</updated>
+    <author>
+      <name>神戸地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075807_0_VPWW53_280000.xml"/>
     <content type="text">【兵庫県気象警報・注意報】南部では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -382,16 +412,6 @@
     <content type="text">【東京都気象警報・注意報】伊豆諸島北部、伊豆諸島南部では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075800_0_VPWW53_120000.xml</id>
-    <updated>2026-11-27T07:57:58Z</updated>
-    <author>
-      <name>銚子地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075800_0_VPWW53_120000.xml"/>
-    <content type="text">【千葉県気象警報・注意報】北東部、南部では、強風や高波に注意してください。千葉県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075800_0_VPWW54_120000.xml</id>
     <updated>2026-11-27T07:57:58Z</updated>
@@ -399,6 +419,16 @@
       <name>銚子地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075800_0_VPWW54_120000.xml"/>
+    <content type="text">【千葉県気象警報・注意報】北東部、南部では、強風や高波に注意してください。千葉県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075800_0_VPWW53_120000.xml</id>
+    <updated>2026-11-27T07:57:58Z</updated>
+    <author>
+      <name>銚子地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075800_0_VPWW53_120000.xml"/>
     <content type="text">【千葉県気象警報・注意報】北東部、南部では、強風や高波に注意してください。千葉県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -442,16 +472,6 @@
     <content type="text">【茨城県気象警報・注意報】南部では、強風や高波、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075754_0_VPWW53_200000.xml</id>
-    <updated>2026-11-27T07:57:52Z</updated>
-    <author>
-      <name>長野地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075754_0_VPWW53_200000.xml"/>
-    <content type="text">【長野県気象警報・注意報】中部、南部では、融雪による土砂災害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075754_0_VPWW54_200000.xml</id>
     <updated>2026-11-27T07:57:52Z</updated>
@@ -462,14 +482,14 @@
     <content type="text">【長野県気象警報・注意報】中部、南部では、融雪による土砂災害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075749_0_VPWW54_050000.xml</id>
-    <updated>2026-11-27T07:57:48Z</updated>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075754_0_VPWW53_200000.xml</id>
+    <updated>2026-11-27T07:57:52Z</updated>
     <author>
-      <name>秋田地方気象台</name>
+      <name>長野地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075749_0_VPWW54_050000.xml"/>
-    <content type="text">【秋田県気象警報・注意報】沿岸では、土砂災害に注意してください。秋田県では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075754_0_VPWW53_200000.xml"/>
+    <content type="text">【長野県気象警報・注意報】中部、南部では、融雪による土砂災害に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -479,6 +499,16 @@
       <name>秋田地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075749_0_VPWW53_050000.xml"/>
+    <content type="text">【秋田県気象警報・注意報】沿岸では、土砂災害に注意してください。秋田県では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075749_0_VPWW54_050000.xml</id>
+    <updated>2026-11-27T07:57:48Z</updated>
+    <author>
+      <name>秋田地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075749_0_VPWW54_050000.xml"/>
     <content type="text">【秋田県気象警報・注意報】沿岸では、土砂災害に注意してください。秋田県では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -542,16 +572,6 @@
     <content type="text">【胆振・日高地方気象警報・注意報】胆振・日高地方では、強風や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075743_0_VPWW53_014100.xml</id>
-    <updated>2026-11-27T07:57:41Z</updated>
-    <author>
-      <name>釧路地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075743_0_VPWW53_014100.xml"/>
-    <content type="text">【釧路・根室地方気象警報・注意報】釧路・根室地方では、強風や高波、落雷、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075743_0_VPWW54_014100.xml</id>
     <updated>2026-11-27T07:57:41Z</updated>
@@ -559,6 +579,16 @@
       <name>釧路地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075743_0_VPWW54_014100.xml"/>
+    <content type="text">【釧路・根室地方気象警報・注意報】釧路・根室地方では、強風や高波、落雷、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075743_0_VPWW53_014100.xml</id>
+    <updated>2026-11-27T07:57:41Z</updated>
+    <author>
+      <name>釧路地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075743_0_VPWW53_014100.xml"/>
     <content type="text">【釧路・根室地方気象警報・注意報】釧路・根室地方では、強風や高波、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -582,16 +612,6 @@
     <content type="text">【十勝地方気象警報・注意報】十勝地方では、強風や落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075740_0_VPWW53_016000.xml</id>
-    <updated>2026-11-27T07:57:38Z</updated>
-    <author>
-      <name>札幌管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075740_0_VPWW53_016000.xml"/>
-    <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩、後志地方では、強風に注意してください。石狩・空知・後志地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075740_0_VPWW54_016000.xml</id>
     <updated>2026-11-27T07:57:38Z</updated>
@@ -602,14 +622,14 @@
     <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩、後志地方では、強風に注意してください。石狩・空知・後志地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075738_0_VPWW54_013000.xml</id>
-    <updated>2026-11-27T07:57:37Z</updated>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075740_0_VPWW53_016000.xml</id>
+    <updated>2026-11-27T07:57:38Z</updated>
     <author>
-      <name>網走地方気象台</name>
+      <name>札幌管区気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075738_0_VPWW54_013000.xml"/>
-    <content type="text">【網走・北見・紋別地方気象警報・注意報】網走、北見地方では、強風に注意してください。網走、北見、紋別地方では、落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075740_0_VPWW53_016000.xml"/>
+    <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩、後志地方では、強風に注意してください。石狩・空知・後志地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -619,6 +639,16 @@
       <name>網走地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075738_0_VPWW53_013000.xml"/>
+    <content type="text">【網走・北見・紋別地方気象警報・注意報】網走、北見地方では、強風に注意してください。網走、北見、紋別地方では、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075738_0_VPWW54_013000.xml</id>
+    <updated>2026-11-27T07:57:37Z</updated>
+    <author>
+      <name>網走地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075738_0_VPWW54_013000.xml"/>
     <content type="text">【網走・北見・紋別地方気象警報・注意報】網走、北見地方では、強風に注意してください。網走、北見、紋別地方では、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -642,16 +672,6 @@
     <content type="text">【上川・留萌地方気象警報・注意報】留萌地方では、強風に注意してください。上川・留萌地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害、なだれに注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075736_0_VPWW53_011000.xml</id>
-    <updated>2026-11-27T07:57:35Z</updated>
-    <author>
-      <name>稚内地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075736_0_VPWW53_011000.xml"/>
-    <content type="text">【宗谷地方気象警報・注意報】宗谷地方では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127075735_0_VPWW54_011000.xml</id>
     <updated>2026-11-27T07:57:35Z</updated>
@@ -659,6 +679,16 @@
       <name>稚内地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075735_0_VPWW54_011000.xml"/>
+    <content type="text">【宗谷地方気象警報・注意報】宗谷地方では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127075736_0_VPWW53_011000.xml</id>
+    <updated>2026-11-27T07:57:35Z</updated>
+    <author>
+      <name>稚内地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127075736_0_VPWW53_011000.xml"/>
     <content type="text">【宗谷地方気象警報・注意報】宗谷地方では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -712,16 +742,6 @@
     <content type="text">【岐阜県気象解説情報（落雷・突風・降ひょう）】岐阜県では、２８日昼前から２９日にかけて、竜巻などの激しい突風、落雷、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>全般気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127074010_0_VPZJ51_010000.xml</id>
-    <updated>2026-11-27T07:40:09Z</updated>
-    <author>
-      <name>気象庁</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127074010_0_VPZJ51_010000.xml"/>
-    <content type="text">【全般気象解説情報（落雷・突風・降ひょう）】北日本から西日本では２９日にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>全般気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127074010_0_VPZJ50_010000.xml</id>
     <updated>2026-11-27T07:40:09Z</updated>
@@ -729,6 +749,16 @@
       <name>気象庁</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127074010_0_VPZJ50_010000.xml"/>
+    <content type="text">【全般気象解説情報（落雷・突風・降ひょう）】北日本から西日本では２９日にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>全般気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127074010_0_VPZJ51_010000.xml</id>
+    <updated>2026-11-27T07:40:09Z</updated>
+    <author>
+      <name>気象庁</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127074010_0_VPZJ51_010000.xml"/>
     <content type="text">【全般気象解説情報（落雷・突風・降ひょう）】北日本から西日本では２９日にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -752,16 +782,6 @@
     <content type="text">【高知県気象解説情報（雪）】高知県では、２９日午前中は山地を中心に雪が降り、積雪となるおそれがあります。交通機関などは積雪に対する備えが必要です。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127073832_0_VPFJ50_240000.xml</id>
-    <updated>2026-11-27T07:38:32Z</updated>
-    <author>
-      <name>津地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073832_0_VPFJ50_240000.xml"/>
-    <content type="text">【三重県気象解説情報（落雷・突風）】三重県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127073832_0_VPFJ51_240000.xml</id>
     <updated>2026-11-27T07:38:32Z</updated>
@@ -769,6 +789,16 @@
       <name>津地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073832_0_VPFJ51_240000.xml"/>
+    <content type="text">【三重県気象解説情報（落雷・突風）】三重県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127073832_0_VPFJ50_240000.xml</id>
+    <updated>2026-11-27T07:38:32Z</updated>
+    <author>
+      <name>津地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073832_0_VPFJ50_240000.xml"/>
     <content type="text">【三重県気象解説情報（落雷・突風）】三重県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -862,16 +892,6 @@
     <content type="text">【愛知県気象解説情報（落雷・突風）】愛知県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127073307_0_VPFJ50_140000.xml</id>
-    <updated>2026-11-27T07:33:06Z</updated>
-    <author>
-      <name>横浜地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073307_0_VPFJ50_140000.xml"/>
-    <content type="text">【神奈川県気象解説情報（大雨・落雷・突風）】神奈川県では、２８日明け方は、雷を伴った激しい雨が降り、大雨となるおそれがあります。東部では、低い土地の浸水、河川の増水に注意・警戒してください。また、神奈川県では、落雷や竜巻などの激しい突風、降ひょうに注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127073307_0_VPFJ51_140000.xml</id>
     <updated>2026-11-27T07:33:06Z</updated>
@@ -879,6 +899,16 @@
       <name>横浜地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073307_0_VPFJ51_140000.xml"/>
+    <content type="text">【神奈川県気象解説情報（大雨・落雷・突風）】神奈川県では、２８日明け方は、雷を伴った激しい雨が降り、大雨となるおそれがあります。東部では、低い土地の浸水、河川の増水に注意・警戒してください。また、神奈川県では、落雷や竜巻などの激しい突風、降ひょうに注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127073307_0_VPFJ50_140000.xml</id>
+    <updated>2026-11-27T07:33:06Z</updated>
+    <author>
+      <name>横浜地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073307_0_VPFJ50_140000.xml"/>
     <content type="text">【神奈川県気象解説情報（大雨・落雷・突風）】神奈川県では、２８日明け方は、雷を伴った激しい雨が降り、大雨となるおそれがあります。東部では、低い土地の浸水、河川の増水に注意・警戒してください。また、神奈川県では、落雷や竜巻などの激しい突風、降ひょうに注意してください。</content>
   </entry>
   <entry>
@@ -932,16 +962,6 @@
     <content type="text">【神奈川県雷注意報】神奈川県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127073059_0_VPFJ50_220000.xml</id>
-    <updated>2026-11-27T07:30:58Z</updated>
-    <author>
-      <name>静岡地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073059_0_VPFJ50_220000.xml"/>
-    <content type="text">【静岡県気象解説情報（落雷・突風）】静岡県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127073059_0_VPFJ51_220000.xml</id>
     <updated>2026-11-27T07:30:58Z</updated>
@@ -949,6 +969,16 @@
       <name>静岡地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073059_0_VPFJ51_220000.xml"/>
+    <content type="text">【静岡県気象解説情報（落雷・突風）】静岡県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127073059_0_VPFJ50_220000.xml</id>
+    <updated>2026-11-27T07:30:58Z</updated>
+    <author>
+      <name>静岡地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127073059_0_VPFJ50_220000.xml"/>
     <content type="text">【静岡県気象解説情報（落雷・突風）】静岡県では、２８日朝から夕方にかけて、竜巻などの激しい突風、落雷、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -1012,16 +1042,6 @@
     <content type="text">【山形県気象解説情報（大雨・落雷・突風）】庄内では、気圧の谷や上空の寒気の影響により、２８日夜のはじめ頃から２９日午前中にかけて、大雨による土砂災害に十分注意してください。また、山形県では、大気の状態が非常に不安定となるため、竜巻などの激しい突風や落雷、急な強い雨、降ひょうに注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127072253_0_VPWW54_200000.xml</id>
-    <updated>2026-11-27T07:22:51Z</updated>
-    <author>
-      <name>長野地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072253_0_VPWW54_200000.xml"/>
-    <content type="text">【長野県気象警報・注意報】中部、南部では、融雪による土砂災害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127072253_0_VPWW53_200000.xml</id>
     <updated>2026-11-27T07:22:51Z</updated>
@@ -1029,6 +1049,16 @@
       <name>長野地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072253_0_VPWW53_200000.xml"/>
+    <content type="text">【長野県気象警報・注意報】中部、南部では、融雪による土砂災害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127072253_0_VPWW54_200000.xml</id>
+    <updated>2026-11-27T07:22:51Z</updated>
+    <author>
+      <name>長野地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072253_0_VPWW54_200000.xml"/>
     <content type="text">【長野県気象警報・注意報】中部、南部では、融雪による土砂災害に注意してください。</content>
   </entry>
   <entry>
@@ -1062,16 +1092,6 @@
     <content type="text">【山形県気象警報・注意報】山形県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127072204_0_VPWW53_050000.xml</id>
-    <updated>2026-11-27T07:22:03Z</updated>
-    <author>
-      <name>秋田地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072204_0_VPWW53_050000.xml"/>
-    <content type="text">【秋田県気象警報・注意報】沿岸では、土砂災害に注意してください。秋田県では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127072204_0_VPWW54_050000.xml</id>
     <updated>2026-11-27T07:22:03Z</updated>
@@ -1079,6 +1099,16 @@
       <name>秋田地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072204_0_VPWW54_050000.xml"/>
+    <content type="text">【秋田県気象警報・注意報】沿岸では、土砂災害に注意してください。秋田県では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127072204_0_VPWW53_050000.xml</id>
+    <updated>2026-11-27T07:22:03Z</updated>
+    <author>
+      <name>秋田地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072204_0_VPWW53_050000.xml"/>
     <content type="text">【秋田県気象警報・注意報】沿岸では、土砂災害に注意してください。秋田県では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -1112,16 +1142,6 @@
     <content type="text">【秋田県波浪警報・注意報】沿岸では、高波に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127072119_0_VPFJ50_420000.xml</id>
-    <updated>2026-11-27T07:21:19Z</updated>
-    <author>
-      <name>長崎地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072119_0_VPFJ50_420000.xml"/>
-    <content type="text">【長崎県気象解説情報（暴風・落雷・降ひょう）】北部、壱岐・対馬、五島の海上では、２８日夕方から夜遅くにかけて暴風に警戒してください。また、長崎県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127072119_0_VPFJ51_420000.xml</id>
     <updated>2026-11-27T07:21:19Z</updated>
@@ -1133,13 +1153,13 @@
   </entry>
   <entry>
     <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127071905_0_VPFJ50_380000.xml</id>
-    <updated>2026-11-27T07:19:04Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127072119_0_VPFJ50_420000.xml</id>
+    <updated>2026-11-27T07:21:19Z</updated>
     <author>
-      <name>松山地方気象台</name>
+      <name>長崎地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071905_0_VPFJ50_380000.xml"/>
-    <content type="text">【愛媛県気象解説情報（落雷・突風・降ひょう）】愛媛県では、２７日夜遅くから２８日明け方にかけてと、２８日夕方から２９日午前中にかけて、落雷、竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけては、降ひょうにも注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127072119_0_VPFJ50_420000.xml"/>
+    <content type="text">【長崎県気象解説情報（暴風・落雷・降ひょう）】北部、壱岐・対馬、五島の海上では、２８日夕方から夜遅くにかけて暴風に警戒してください。また、長崎県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象解説情報</title>
@@ -1149,6 +1169,16 @@
       <name>松山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071905_0_VPFJ51_380000.xml"/>
+    <content type="text">【愛媛県気象解説情報（落雷・突風・降ひょう）】愛媛県では、２７日夜遅くから２８日明け方にかけてと、２８日夕方から２９日午前中にかけて、落雷、竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけては、降ひょうにも注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127071905_0_VPFJ50_380000.xml</id>
+    <updated>2026-11-27T07:19:04Z</updated>
+    <author>
+      <name>松山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071905_0_VPFJ50_380000.xml"/>
     <content type="text">【愛媛県気象解説情報（落雷・突風・降ひょう）】愛媛県では、２７日夜遅くから２８日明け方にかけてと、２８日夕方から２９日午前中にかけて、落雷、竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけては、降ひょうにも注意してください。</content>
   </entry>
   <entry>
@@ -1222,16 +1252,6 @@
     <content type="text">【茨城県波浪警報・注意報】南部では、高波に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127071523_0_VPFJ51_410000.xml</id>
-    <updated>2026-11-27T07:15:23Z</updated>
-    <author>
-      <name>佐賀地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071523_0_VPFJ51_410000.xml"/>
-    <content type="text">【佐賀県気象解説情報（落雷・突風・降ひょう）】佐賀県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127071523_0_VPFJ50_410000.xml</id>
     <updated>2026-11-27T07:15:23Z</updated>
@@ -1239,6 +1259,16 @@
       <name>佐賀地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071523_0_VPFJ50_410000.xml"/>
+    <content type="text">【佐賀県気象解説情報（落雷・突風・降ひょう）】佐賀県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127071523_0_VPFJ51_410000.xml</id>
+    <updated>2026-11-27T07:15:23Z</updated>
+    <author>
+      <name>佐賀地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071523_0_VPFJ51_410000.xml"/>
     <content type="text">【佐賀県気象解説情報（落雷・突風・降ひょう）】佐賀県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -1282,16 +1312,6 @@
     <content type="text">【秋田県気象解説情報（落雷・突風・降ひょう）】秋田県では、２８日未明から夜遅くにかけて、気圧の谷や上空の寒気の影響により、大気の状態が非常に不安定となるでしょう。竜巻などの激しい突風や落雷、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127071002_0_VPCJ51_370000.xml</id>
-    <updated>2026-11-27T07:10:02Z</updated>
-    <author>
-      <name>高松地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071002_0_VPCJ51_370000.xml"/>
-    <content type="text">【四国地方気象解説情報（落雷・突風・降ひょう）】四国地方では、２８日明け方にかけてと、２８日夕方から２９日午前中にかけて、落雷、竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけては、降ひょうにも注意してください。</content>
-  </entry>
-  <entry>
     <title>地方気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127071002_0_VPCJ50_370000.xml</id>
     <updated>2026-11-27T07:10:02Z</updated>
@@ -1302,14 +1322,14 @@
     <content type="text">【四国地方気象解説情報（落雷・突風・降ひょう）】四国地方では、２８日明け方にかけてと、２８日夕方から２９日午前中にかけて、落雷、竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけては、降ひょうにも注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070913_0_VPWW54_380000.xml</id>
-    <updated>2026-11-27T07:09:12Z</updated>
+    <title>地方気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127071002_0_VPCJ51_370000.xml</id>
+    <updated>2026-11-27T07:10:02Z</updated>
     <author>
-      <name>松山地方気象台</name>
+      <name>高松地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070913_0_VPWW54_380000.xml"/>
-    <content type="text">【愛媛県気象警報・注意報】愛媛県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127071002_0_VPCJ51_370000.xml"/>
+    <content type="text">【四国地方気象解説情報（落雷・突風・降ひょう）】四国地方では、２８日明け方にかけてと、２８日夕方から２９日午前中にかけて、落雷、竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけては、降ひょうにも注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -1319,6 +1339,16 @@
       <name>松山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070913_0_VPWW53_380000.xml"/>
+    <content type="text">【愛媛県気象警報・注意報】愛媛県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070913_0_VPWW54_380000.xml</id>
+    <updated>2026-11-27T07:09:12Z</updated>
+    <author>
+      <name>松山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070913_0_VPWW54_380000.xml"/>
     <content type="text">【愛媛県気象警報・注意報】愛媛県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -1352,16 +1382,6 @@
     <content type="text">【青森県気象警報・注意報】津軽では、高波に注意してください。青森県では、竜巻などの激しい突風や落雷に注意してください。津軽、下北では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（波浪）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070808_0_VPWW59_020000.xml</id>
-    <updated>2026-11-27T07:08:07Z</updated>
-    <author>
-      <name>青森地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070808_0_VPWW59_020000.xml"/>
-    <content type="text">【青森県波浪警報・注意報】津軽では、高波に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127070808_0_VPWW61_020000.xml</id>
     <updated>2026-11-27T07:08:07Z</updated>
@@ -1372,14 +1392,14 @@
     <content type="text">【青森県雷・濃霧注意報】青森県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。津軽、下北では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070749_0_VPFJ51_400000.xml</id>
-    <updated>2026-11-27T07:07:49Z</updated>
+    <title>気象警報・注意報（Ｒ０６）（波浪）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070808_0_VPWW59_020000.xml</id>
+    <updated>2026-11-27T07:08:07Z</updated>
     <author>
-      <name>福岡管区気象台</name>
+      <name>青森地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070749_0_VPFJ51_400000.xml"/>
-    <content type="text">【福岡県気象解説情報（落雷・突風・降ひょう）】福岡県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070808_0_VPWW59_020000.xml"/>
+    <content type="text">【青森県波浪警報・注意報】津軽では、高波に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象情報</title>
@@ -1389,6 +1409,16 @@
       <name>福岡管区気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070749_0_VPFJ50_400000.xml"/>
+    <content type="text">【福岡県気象解説情報（落雷・突風・降ひょう）】福岡県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070749_0_VPFJ51_400000.xml</id>
+    <updated>2026-11-27T07:07:49Z</updated>
+    <author>
+      <name>福岡管区気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070749_0_VPFJ51_400000.xml"/>
     <content type="text">【福岡県気象解説情報（落雷・突風・降ひょう）】福岡県では、２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -1412,16 +1442,6 @@
     <content type="text">【山口県気象解説情報（落雷・突風・降ひょう）】山口県では、２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070727_0_VPWW53_150000.xml</id>
-    <updated>2026-11-27T07:07:25Z</updated>
-    <author>
-      <name>新潟地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070727_0_VPWW53_150000.xml"/>
-    <content type="text">【新潟県気象警報・注意報】佐渡では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127070726_0_VPWW54_150000.xml</id>
     <updated>2026-11-27T07:07:25Z</updated>
@@ -1429,6 +1449,16 @@
       <name>新潟地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070726_0_VPWW54_150000.xml"/>
+    <content type="text">【新潟県気象警報・注意報】佐渡では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070727_0_VPWW53_150000.xml</id>
+    <updated>2026-11-27T07:07:25Z</updated>
+    <author>
+      <name>新潟地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070727_0_VPWW53_150000.xml"/>
     <content type="text">【新潟県気象警報・注意報】佐渡では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -1452,16 +1482,6 @@
     <content type="text">【新潟県波浪警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070500_0_VPWW53_130000.xml</id>
-    <updated>2026-11-27T07:04:58Z</updated>
-    <author>
-      <name>気象庁</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070500_0_VPWW53_130000.xml"/>
-    <content type="text">【東京都気象警報・注意報】伊豆諸島北部、伊豆諸島南部では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127070500_0_VPWW54_130000.xml</id>
     <updated>2026-11-27T07:04:58Z</updated>
@@ -1472,14 +1492,14 @@
     <content type="text">【東京都気象警報・注意報】伊豆諸島北部、伊豆諸島南部では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070458_0_VPWW54_120000.xml</id>
-    <updated>2026-11-27T07:04:56Z</updated>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070500_0_VPWW53_130000.xml</id>
+    <updated>2026-11-27T07:04:58Z</updated>
     <author>
-      <name>銚子地方気象台</name>
+      <name>気象庁</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070458_0_VPWW54_120000.xml"/>
-    <content type="text">【千葉県気象警報・注意報】北東部、南部では、強風や高波に注意してください。千葉県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070500_0_VPWW53_130000.xml"/>
+    <content type="text">【東京都気象警報・注意報】伊豆諸島北部、伊豆諸島南部では、強風や高波、竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -1492,14 +1512,24 @@
     <content type="text">【千葉県気象警報・注意報】北東部、南部では、強風や高波に注意してください。千葉県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（波浪）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW59_130000.xml</id>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070458_0_VPWW54_120000.xml</id>
+    <updated>2026-11-27T07:04:56Z</updated>
+    <author>
+      <name>銚子地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070458_0_VPWW54_120000.xml"/>
+    <content type="text">【千葉県気象警報・注意報】北東部、南部では、強風や高波に注意してください。千葉県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW58_130000.xml</id>
     <updated>2026-11-27T07:04:54Z</updated>
     <author>
       <name>気象庁</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW59_130000.xml"/>
-    <content type="text">【東京都波浪警報・注意報】伊豆諸島北部、伊豆諸島南部では、高波に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW58_130000.xml"/>
+    <content type="text">【東京都暴風（雪）警報・注意報】伊豆諸島北部、伊豆諸島南部では、強風に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
@@ -1512,14 +1542,14 @@
     <content type="text">【東京都雷注意報】伊豆諸島北部、伊豆諸島南部では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW58_130000.xml</id>
+    <title>気象警報・注意報（Ｒ０６）（波浪）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW59_130000.xml</id>
     <updated>2026-11-27T07:04:54Z</updated>
     <author>
       <name>気象庁</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW58_130000.xml"/>
-    <content type="text">【東京都暴風（雪）警報・注意報】伊豆諸島北部、伊豆諸島南部では、強風に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070454_0_VPWW59_130000.xml"/>
+    <content type="text">【東京都波浪警報・注意報】伊豆諸島北部、伊豆諸島南部では、高波に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象情報</title>
@@ -1542,14 +1572,14 @@
     <content type="text">【熊本県気象解説情報（落雷・突風・降ひょう）】熊本県では、２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW58_120000.xml</id>
+    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW61_120000.xml</id>
     <updated>2026-11-27T07:04:46Z</updated>
     <author>
       <name>銚子地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW58_120000.xml"/>
-    <content type="text">【千葉県暴風（雪）警報・注意報】北東部、南部では、強風に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW61_120000.xml"/>
+    <content type="text">【千葉県雷注意報】千葉県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｒ０６）（波浪）</title>
@@ -1562,14 +1592,14 @@
     <content type="text">【千葉県波浪警報・注意報】北東部、南部では、高波に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW61_120000.xml</id>
+    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW58_120000.xml</id>
     <updated>2026-11-27T07:04:46Z</updated>
     <author>
       <name>銚子地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW61_120000.xml"/>
-    <content type="text">【千葉県雷注意報】千葉県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127070447_0_VPWW58_120000.xml"/>
+    <content type="text">【千葉県暴風（雪）警報・注意報】北東部、南部では、強風に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象情報</title>
@@ -1682,16 +1712,6 @@
     <content type="text">【鹿児島県（奄美地方を除く）気象解説情報（落雷・突風）】薩摩、大隅、種子島・屋久島地方では、２８日明け方にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065823_0_VPFJ51_270000.xml</id>
-    <updated>2026-11-27T06:58:23Z</updated>
-    <author>
-      <name>大阪管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065823_0_VPFJ51_270000.xml"/>
-    <content type="text">【大阪府気象解説情報（落雷・突風・降ひょう）】大阪府では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127065823_0_VPFJ50_270000.xml</id>
     <updated>2026-11-27T06:58:23Z</updated>
@@ -1699,6 +1719,16 @@
       <name>大阪管区気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065823_0_VPFJ50_270000.xml"/>
+    <content type="text">【大阪府気象解説情報（落雷・突風・降ひょう）】大阪府では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065823_0_VPFJ51_270000.xml</id>
+    <updated>2026-11-27T06:58:23Z</updated>
+    <author>
+      <name>大阪管区気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065823_0_VPFJ51_270000.xml"/>
     <content type="text">【大阪府気象解説情報（落雷・突風・降ひょう）】大阪府では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -1742,16 +1772,6 @@
     <content type="text">【奈良県気象解説情報（落雷・突風・降ひょう）】奈良県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065629_0_VPFJ51_300000.xml</id>
-    <updated>2026-11-27T06:56:28Z</updated>
-    <author>
-      <name>和歌山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065629_0_VPFJ51_300000.xml"/>
-    <content type="text">【和歌山県気象解説情報（落雷・突風・降ひょう）】和歌山県では、２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127065629_0_VPFJ50_300000.xml</id>
     <updated>2026-11-27T06:56:28Z</updated>
@@ -1759,6 +1779,16 @@
       <name>和歌山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065629_0_VPFJ50_300000.xml"/>
+    <content type="text">【和歌山県気象解説情報（落雷・突風・降ひょう）】和歌山県では、２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065629_0_VPFJ51_300000.xml</id>
+    <updated>2026-11-27T06:56:28Z</updated>
+    <author>
+      <name>和歌山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065629_0_VPFJ51_300000.xml"/>
     <content type="text">【和歌山県気象解説情報（落雷・突風・降ひょう）】和歌山県では、２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
   </entry>
   <entry>
@@ -1812,16 +1842,6 @@
     <content type="text">【奄美地方（鹿児島県）土砂災害警報・注意報】奄美地方では、土砂災害に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065511_0_VPCJ51_270000.xml</id>
-    <updated>2026-11-27T06:55:10Z</updated>
-    <author>
-      <name>大阪管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065511_0_VPCJ51_270000.xml"/>
-    <content type="text">【近畿地方気象解説情報（落雷・突風・降ひょう）】近畿地方では、２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
-  </entry>
-  <entry>
     <title>地方気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127065511_0_VPCJ50_270000.xml</id>
     <updated>2026-11-27T06:55:10Z</updated>
@@ -1832,14 +1852,14 @@
     <content type="text">【近畿地方気象解説情報（落雷・突風・降ひょう）】近畿地方では、２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065412_0_VPWW53_460040.xml</id>
-    <updated>2026-11-27T06:54:11Z</updated>
+    <title>地方気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065511_0_VPCJ51_270000.xml</id>
+    <updated>2026-11-27T06:55:10Z</updated>
     <author>
-      <name>名瀬測候所</name>
+      <name>大阪管区気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065412_0_VPWW53_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や竜巻などの激しい突風、落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065511_0_VPCJ51_270000.xml"/>
+    <content type="text">【近畿地方気象解説情報（落雷・突風・降ひょう）】近畿地方では、２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -1849,6 +1869,16 @@
       <name>名瀬測候所</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065412_0_VPWW54_460040.xml"/>
+    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や竜巻などの激しい突風、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065412_0_VPWW53_460040.xml</id>
+    <updated>2026-11-27T06:54:11Z</updated>
+    <author>
+      <name>名瀬測候所</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065412_0_VPWW53_460040.xml"/>
     <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や竜巻などの激しい突風、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -1872,16 +1902,6 @@
     <content type="text">【奄美地方（鹿児島県）波浪警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065406_0_VPWW53_014100.xml</id>
-    <updated>2026-11-27T06:54:05Z</updated>
-    <author>
-      <name>釧路地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065406_0_VPWW53_014100.xml"/>
-    <content type="text">【釧路・根室地方気象警報・注意報】釧路・根室地方では、強風や高波、落雷、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127065406_0_VPWW54_014100.xml</id>
     <updated>2026-11-27T06:54:05Z</updated>
@@ -1889,6 +1909,16 @@
       <name>釧路地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065406_0_VPWW54_014100.xml"/>
+    <content type="text">【釧路・根室地方気象警報・注意報】釧路・根室地方では、強風や高波、落雷、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065406_0_VPWW53_014100.xml</id>
+    <updated>2026-11-27T06:54:05Z</updated>
+    <author>
+      <name>釧路地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065406_0_VPWW53_014100.xml"/>
     <content type="text">【釧路・根室地方気象警報・注意報】釧路・根室地方では、強風や高波、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -1922,16 +1952,6 @@
     <content type="text">【釧路・根室地方雷・濃霧注意報】根室、釧路地方では、急な強い雨や落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065336_0_VPFJ50_040000.xml</id>
-    <updated>2026-11-27T06:53:35Z</updated>
-    <author>
-      <name>仙台管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065336_0_VPFJ50_040000.xml"/>
-    <content type="text">【宮城県気象解説情報（強風）】２９日は、東部の陸上では、西よりの強風による交通障害や建物への被害に十分注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127065336_0_VPFJ51_040000.xml</id>
     <updated>2026-11-27T06:53:35Z</updated>
@@ -1939,6 +1959,16 @@
       <name>仙台管区気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065336_0_VPFJ51_040000.xml"/>
+    <content type="text">【宮城県気象解説情報（強風）】２９日は、東部の陸上では、西よりの強風による交通障害や建物への被害に十分注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065336_0_VPFJ50_040000.xml</id>
+    <updated>2026-11-27T06:53:35Z</updated>
+    <author>
+      <name>仙台管区気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065336_0_VPFJ50_040000.xml"/>
     <content type="text">【宮城県気象解説情報（強風）】２９日は、東部の陸上では、西よりの強風による交通障害や建物への被害に十分注意してください。</content>
   </entry>
   <entry>
@@ -1982,16 +2012,6 @@
     <content type="text">【胆振・日高地方雷・濃霧注意報】胆振、日高地方では、竜巻などの激しい突風や急な強い雨、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065037_0_VPCJ50_460100.xml</id>
-    <updated>2026-11-27T06:50:36Z</updated>
-    <author>
-      <name>鹿児島地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065037_0_VPCJ50_460100.xml"/>
-    <content type="text">【九州南部・奄美地方気象解説情報（落雷・突風）】鹿児島県では、２８日明け方にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>地方気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127065036_0_VPCJ51_460100.xml</id>
     <updated>2026-11-27T06:50:36Z</updated>
@@ -1999,6 +2019,16 @@
       <name>鹿児島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065036_0_VPCJ51_460100.xml"/>
+    <content type="text">【九州南部・奄美地方気象解説情報（落雷・突風）】鹿児島県では、２８日明け方にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>地方気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127065037_0_VPCJ50_460100.xml</id>
+    <updated>2026-11-27T06:50:36Z</updated>
+    <author>
+      <name>鹿児島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127065037_0_VPCJ50_460100.xml"/>
     <content type="text">【九州南部・奄美地方気象解説情報（落雷・突風）】鹿児島県では、２８日明け方にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -2042,16 +2072,6 @@
     <content type="text">【十勝地方気象警報・注意報】十勝地方では、強風や落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127064910_0_VPWW58_014030.xml</id>
-    <updated>2026-11-27T06:49:10Z</updated>
-    <author>
-      <name>帯広測候所</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064910_0_VPWW58_014030.xml"/>
-    <content type="text">【十勝地方暴風（雪）警報・注意報】十勝地方では、強風に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127064910_0_VPWW61_014030.xml</id>
     <updated>2026-11-27T06:49:10Z</updated>
@@ -2060,6 +2080,16 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064910_0_VPWW61_014030.xml"/>
     <content type="text">【十勝地方雷・濃霧注意報】十勝地方では、急な強い雨や落雷、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127064910_0_VPWW58_014030.xml</id>
+    <updated>2026-11-27T06:49:10Z</updated>
+    <author>
+      <name>帯広測候所</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064910_0_VPWW58_014030.xml"/>
+    <content type="text">【十勝地方暴風（雪）警報・注意報】十勝地方では、強風に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -2102,16 +2132,6 @@
     <content type="text">【網走・北見・紋別地方雷注意報】網走、北見、紋別地方では、急な強い雨や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127064619_0_VPWW54_017000.xml</id>
-    <updated>2026-11-27T06:46:18Z</updated>
-    <author>
-      <name>函館地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064619_0_VPWW54_017000.xml"/>
-    <content type="text">【渡島・檜山地方気象警報・注意報】渡島・檜山地方では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127064619_0_VPWW53_017000.xml</id>
     <updated>2026-11-27T06:46:18Z</updated>
@@ -2122,14 +2142,14 @@
     <content type="text">【渡島・檜山地方気象警報・注意報】渡島・檜山地方では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127064612_0_VPWW61_017000.xml</id>
-    <updated>2026-11-27T06:46:11Z</updated>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127064619_0_VPWW54_017000.xml</id>
+    <updated>2026-11-27T06:46:18Z</updated>
     <author>
       <name>函館地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064612_0_VPWW61_017000.xml"/>
-    <content type="text">【渡島・檜山地方雷・濃霧注意報】渡島、檜山地方では、竜巻などの激しい突風や急な強い雨、落雷、濃霧による視程障害に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064619_0_VPWW54_017000.xml"/>
+    <content type="text">【渡島・檜山地方気象警報・注意報】渡島・檜山地方では、高波や竜巻などの激しい突風、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｒ０６）（波浪）</title>
@@ -2140,6 +2160,16 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064611_0_VPWW59_017000.xml"/>
     <content type="text">【渡島・檜山地方波浪警報・注意報】渡島、檜山地方では、高波に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127064612_0_VPWW61_017000.xml</id>
+    <updated>2026-11-27T06:46:11Z</updated>
+    <author>
+      <name>函館地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127064612_0_VPWW61_017000.xml"/>
+    <content type="text">【渡島・檜山地方雷・濃霧注意報】渡島、檜山地方では、竜巻などの激しい突風や急な強い雨、落雷、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -2172,16 +2202,6 @@
     <content type="text">【宗谷地方雷注意報】宗谷地方では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127063850_0_VPWW58_011000.xml</id>
-    <updated>2026-11-27T06:38:49Z</updated>
-    <author>
-      <name>稚内地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127063850_0_VPWW58_011000.xml"/>
-    <content type="text">【宗谷地方暴風（雪）警報・注意報】宗谷地方では、強風に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｒ０６）（波浪）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127063850_0_VPWW59_011000.xml</id>
     <updated>2026-11-27T06:38:49Z</updated>
@@ -2190,6 +2210,16 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127063850_0_VPWW59_011000.xml"/>
     <content type="text">【宗谷地方波浪警報・注意報】宗谷地方では、高波に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127063850_0_VPWW58_011000.xml</id>
+    <updated>2026-11-27T06:38:49Z</updated>
+    <author>
+      <name>稚内地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127063850_0_VPWW58_011000.xml"/>
+    <content type="text">【宗谷地方暴風（雪）警報・注意報】宗谷地方では、強風に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -2252,16 +2282,6 @@
     <content type="text">【島根県雷注意報】島根県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127062619_0_VPWW54_016000.xml</id>
-    <updated>2026-11-27T06:26:17Z</updated>
-    <author>
-      <name>札幌管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127062619_0_VPWW54_016000.xml"/>
-    <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩、後志地方では、強風に注意してください。石狩・空知・後志地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127062619_0_VPWW53_016000.xml</id>
     <updated>2026-11-27T06:26:17Z</updated>
@@ -2269,6 +2289,16 @@
       <name>札幌管区気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127062619_0_VPWW53_016000.xml"/>
+    <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩、後志地方では、強風に注意してください。石狩・空知・後志地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127062619_0_VPWW54_016000.xml</id>
+    <updated>2026-11-27T06:26:17Z</updated>
+    <author>
+      <name>札幌管区気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127062619_0_VPWW54_016000.xml"/>
     <content type="text">【石狩・空知・後志地方気象警報・注意報】石狩、後志地方では、強風に注意してください。石狩・空知・後志地方では、高波や竜巻などの激しい突風、落雷、融雪による土砂災害に注意してください。</content>
   </entry>
   <entry>
@@ -2452,16 +2482,6 @@
     <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】沖縄本島地方では、警報級の大雨となる可能性は低くなりましたので、本島北部に発表していたレベル４土砂災害危険警報をレベル２土砂災害注意報に切り替えました。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127045139_0_VPWW53_471000.xml</id>
-    <updated>2026-11-27T04:51:38Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127045139_0_VPWW53_471000.xml"/>
-    <content type="text">【沖縄本島地方気象警報・注意報】本島北部では、土砂災害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127045139_0_VPWW54_471000.xml</id>
     <updated>2026-11-27T04:51:38Z</updated>
@@ -2469,6 +2489,16 @@
       <name>沖縄気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127045139_0_VPWW54_471000.xml"/>
+    <content type="text">【沖縄本島地方気象警報・注意報】本島北部では、土砂災害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127045139_0_VPWW53_471000.xml</id>
+    <updated>2026-11-27T04:51:38Z</updated>
+    <author>
+      <name>沖縄気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127045139_0_VPWW53_471000.xml"/>
     <content type="text">【沖縄本島地方気象警報・注意報】本島北部では、土砂災害に注意してください。</content>
   </entry>
   <entry>
@@ -2643,16 +2673,6 @@
     <content type="text">【秋田県土砂災害警報・注意報】沿岸では、土砂災害に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127032822_0_VPCJ50_471000.xml</id>
-    <updated>2026-11-27T03:28:22Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127032822_0_VPCJ50_471000.xml"/>
-    <content type="text">【沖縄地方気象解説情報（大雨・落雷・突風）】沖縄本島地方では、２７日昼過ぎまで土砂災害に厳重に警戒し、低い土地の浸水や河川の増水に十分注意してください。また、沖縄本島地方と大東島地方では、落雷や竜巻などの激しい突風、急な強い雨に十分注意してください。</content>
-  </entry>
-  <entry>
     <title>地方気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127032822_0_VPCJ51_471000.xml</id>
     <updated>2026-11-27T03:28:22Z</updated>
@@ -2663,14 +2683,14 @@
     <content type="text">【沖縄地方気象解説情報（大雨・落雷・突風）】沖縄本島地方では、２７日昼過ぎまで土砂災害に厳重に警戒し、低い土地の浸水や河川の増水に十分注意してください。また、沖縄本島地方と大東島地方では、落雷や竜巻などの激しい突風、急な強い雨に十分注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127032027_0_VPWW53_070000.xml</id>
-    <updated>2026-11-27T03:20:26Z</updated>
+    <title>地方気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127032822_0_VPCJ50_471000.xml</id>
+    <updated>2026-11-27T03:28:22Z</updated>
     <author>
-      <name>福島地方気象台</name>
+      <name>沖縄気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127032027_0_VPWW53_070000.xml"/>
-    <content type="text">【福島県気象警報・注意報】会津では、なだれに注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127032822_0_VPCJ50_471000.xml"/>
+    <content type="text">【沖縄地方気象解説情報（大雨・落雷・突風）】沖縄本島地方では、２７日昼過ぎまで土砂災害に厳重に警戒し、低い土地の浸水や河川の増水に十分注意してください。また、沖縄本島地方と大東島地方では、落雷や竜巻などの激しい突風、急な強い雨に十分注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -2680,6 +2700,16 @@
       <name>福島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127032027_0_VPWW54_070000.xml"/>
+    <content type="text">【福島県気象警報・注意報】会津では、なだれに注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127032027_0_VPWW53_070000.xml</id>
+    <updated>2026-11-27T03:20:26Z</updated>
+    <author>
+      <name>福島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127032027_0_VPWW53_070000.xml"/>
     <content type="text">【福島県気象警報・注意報】会津では、なだれに注意してください。</content>
   </entry>
   <entry>
@@ -2813,16 +2843,6 @@
     <content type="text">【秋田県気象解説情報（落雷・突風・降ひょう）】秋田県では、２８日未明から夜遅くにかけて、気圧の谷や上空の寒気の影響により、大気の状態が非常に不安定となるでしょう。竜巻などの激しい突風や落雷、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127023116_0_VPFJ50_270000.xml</id>
-    <updated>2026-11-27T02:31:16Z</updated>
-    <author>
-      <name>大阪管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127023116_0_VPFJ50_270000.xml"/>
-    <content type="text">【大阪府気象解説情報（落雷・突風・降ひょう）】大阪府では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127023116_0_VPFJ51_270000.xml</id>
     <updated>2026-11-27T02:31:16Z</updated>
@@ -2833,14 +2853,14 @@
     <content type="text">【大阪府気象解説情報（落雷・突風・降ひょう）】大阪府では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127023114_0_VPFJ51_280000.xml</id>
-    <updated>2026-11-27T02:31:14Z</updated>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127023116_0_VPFJ50_270000.xml</id>
+    <updated>2026-11-27T02:31:16Z</updated>
     <author>
-      <name>神戸地方気象台</name>
+      <name>大阪管区気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127023114_0_VPFJ51_280000.xml"/>
-    <content type="text">【兵庫県気象解説情報（落雷・突風・降ひょう）】兵庫県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127023116_0_VPFJ50_270000.xml"/>
+    <content type="text">【大阪府気象解説情報（落雷・突風・降ひょう）】大阪府では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象情報</title>
@@ -2850,6 +2870,16 @@
       <name>神戸地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127023114_0_VPFJ50_280000.xml"/>
+    <content type="text">【兵庫県気象解説情報（落雷・突風・降ひょう）】兵庫県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127023114_0_VPFJ51_280000.xml</id>
+    <updated>2026-11-27T02:31:14Z</updated>
+    <author>
+      <name>神戸地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127023114_0_VPFJ51_280000.xml"/>
     <content type="text">【兵庫県気象解説情報（落雷・突風・降ひょう）】兵庫県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -2913,16 +2943,6 @@
     <content type="text">【和歌山県気象解説情報（落雷・突風・降ひょう）】和歌山県では、２７日夕方から２９日午前中にかけて落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日昼前からは降ひょうにも注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021751_0_VPFJ50_440000.xml</id>
-    <updated>2026-11-27T02:17:50Z</updated>
-    <author>
-      <name>大分地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021751_0_VPFJ50_440000.xml"/>
-    <content type="text">【大分県気象解説情報（落雷・突風・降ひょう）】大分県では、２７日夜のはじめ頃から２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127021750_0_VPFJ51_440000.xml</id>
     <updated>2026-11-27T02:17:50Z</updated>
@@ -2930,6 +2950,16 @@
       <name>大分地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021750_0_VPFJ51_440000.xml"/>
+    <content type="text">【大分県気象解説情報（落雷・突風・降ひょう）】大分県では、２７日夜のはじめ頃から２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021751_0_VPFJ50_440000.xml</id>
+    <updated>2026-11-27T02:17:50Z</updated>
+    <author>
+      <name>大分地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021751_0_VPFJ50_440000.xml"/>
     <content type="text">【大分県気象解説情報（落雷・突風・降ひょう）】大分県では、２７日夜のはじめ頃から２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -2953,16 +2983,6 @@
     <content type="text">【滋賀県気象解説情報（落雷・突風・降ひょう）】滋賀県では、２８日昼過ぎから２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021550_0_VPFJ51_290000.xml</id>
-    <updated>2026-11-27T02:15:50Z</updated>
-    <author>
-      <name>奈良地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021550_0_VPFJ51_290000.xml"/>
-    <content type="text">【奈良県気象解説情報（落雷・突風・降ひょう）】奈良県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127021550_0_VPFJ50_290000.xml</id>
     <updated>2026-11-27T02:15:50Z</updated>
@@ -2973,14 +2993,14 @@
     <content type="text">【奈良県気象解説情報（落雷・突風・降ひょう）】奈良県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021535_0_VPFJ50_260000.xml</id>
-    <updated>2026-11-27T02:15:34Z</updated>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021550_0_VPFJ51_290000.xml</id>
+    <updated>2026-11-27T02:15:50Z</updated>
     <author>
-      <name>京都地方気象台</name>
+      <name>奈良地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021535_0_VPFJ50_260000.xml"/>
-    <content type="text">【京都府気象解説情報（落雷・突風・降ひょう）】京都府では、２８日昼過ぎから２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021550_0_VPFJ51_290000.xml"/>
+    <content type="text">【奈良県気象解説情報（落雷・突風・降ひょう）】奈良県では、２８日昼前から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象解説情報</title>
@@ -2990,6 +3010,16 @@
       <name>京都地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021535_0_VPFJ51_260000.xml"/>
+    <content type="text">【京都府気象解説情報（落雷・突風・降ひょう）】京都府では、２８日昼過ぎから２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021535_0_VPFJ50_260000.xml</id>
+    <updated>2026-11-27T02:15:34Z</updated>
+    <author>
+      <name>京都地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021535_0_VPFJ50_260000.xml"/>
     <content type="text">【京都府気象解説情報（落雷・突風・降ひょう）】京都府では、２８日昼過ぎから２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3013,16 +3043,6 @@
     <content type="text">【長崎県気象解説情報（落雷・突風・降ひょう）】長崎県では、２７日夕方から２８日明け方にかけて、落雷や竜巻などの激しい突風、急な強い雨に注意してください。また、２８日夕方から２９日午前中にかけて、降ひょうにも注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021312_0_VPFJ51_410000.xml</id>
-    <updated>2026-11-27T02:13:12Z</updated>
-    <author>
-      <name>佐賀地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021312_0_VPFJ51_410000.xml"/>
-    <content type="text">【佐賀県気象解説情報（落雷・突風・降ひょう）】佐賀県では、２７日夕方から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127021312_0_VPFJ50_410000.xml</id>
     <updated>2026-11-27T02:13:12Z</updated>
@@ -3030,6 +3050,16 @@
       <name>佐賀地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021312_0_VPFJ50_410000.xml"/>
+    <content type="text">【佐賀県気象解説情報（落雷・突風・降ひょう）】佐賀県では、２７日夕方から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127021312_0_VPFJ51_410000.xml</id>
+    <updated>2026-11-27T02:13:12Z</updated>
+    <author>
+      <name>佐賀地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127021312_0_VPFJ51_410000.xml"/>
     <content type="text">【佐賀県気象解説情報（落雷・突風・降ひょう）】佐賀県では、２７日夕方から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3084,13 +3114,13 @@
   </entry>
   <entry>
     <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127020721_0_VPFJ50_350000.xml</id>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127020720_0_VPFJ50_471000.xml</id>
     <updated>2026-11-27T02:07:20Z</updated>
     <author>
-      <name>下関地方気象台</name>
+      <name>沖縄気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020721_0_VPFJ50_350000.xml"/>
-    <content type="text">【山口県気象解説情報（落雷・突風・降ひょう）】山口県では、２７日夕方から２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020720_0_VPFJ50_471000.xml"/>
+    <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島北部では、２７日昼過ぎまで土砂災害に厳重に警戒し、低い土地の浸水や河川の増水に十分注意してください。沖縄本島地方では、２７日昼過ぎまで落雷や竜巻などの激しい突風、急な強い雨にも十分注意してください。</content>
   </entry>
   <entry>
     <title>府県気象解説情報</title>
@@ -3104,13 +3134,13 @@
   </entry>
   <entry>
     <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127020720_0_VPFJ50_471000.xml</id>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127020721_0_VPFJ50_350000.xml</id>
     <updated>2026-11-27T02:07:20Z</updated>
     <author>
-      <name>沖縄気象台</name>
+      <name>下関地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020720_0_VPFJ50_471000.xml"/>
-    <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島北部では、２７日昼過ぎまで土砂災害に厳重に警戒し、低い土地の浸水や河川の増水に十分注意してください。沖縄本島地方では、２７日昼過ぎまで落雷や竜巻などの激しい突風、急な強い雨にも十分注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020721_0_VPFJ50_350000.xml"/>
+    <content type="text">【山口県気象解説情報（落雷・突風・降ひょう）】山口県では、２７日夕方から２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>府県気象情報</title>
@@ -3133,16 +3163,6 @@
     <content type="text">【熊本県気象解説情報（落雷・突風・降ひょう）】熊本県では、２７日夕方から２９日午前中にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127020306_0_VPFJ50_330000.xml</id>
-    <updated>2026-11-27T02:03:05Z</updated>
-    <author>
-      <name>岡山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020306_0_VPFJ50_330000.xml"/>
-    <content type="text">【岡山県気象解説情報（落雷・突風）】岡山県では、２８日昼前から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127020306_0_VPFJ51_330000.xml</id>
     <updated>2026-11-27T02:03:05Z</updated>
@@ -3150,6 +3170,16 @@
       <name>岡山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020306_0_VPFJ51_330000.xml"/>
+    <content type="text">【岡山県気象解説情報（落雷・突風）】岡山県では、２８日昼前から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127020306_0_VPFJ50_330000.xml</id>
+    <updated>2026-11-27T02:03:05Z</updated>
+    <author>
+      <name>岡山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127020306_0_VPFJ50_330000.xml"/>
     <content type="text">【岡山県気象解説情報（落雷・突風）】岡山県では、２８日昼前から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3193,16 +3223,6 @@
     <content type="text">【大東島地方気象警報・注意報】大東島地方では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015808_0_VPWW54_471000.xml</id>
-    <updated>2026-11-27T01:58:07Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015808_0_VPWW54_471000.xml"/>
-    <content type="text">【沖縄本島地方気象警報・注意報】〈危険警報（土砂災害）〉本島北部では、土砂災害に厳重に警戒してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127015808_0_VPWW53_471000.xml</id>
     <updated>2026-11-27T01:58:07Z</updated>
@@ -3214,13 +3234,13 @@
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015807_0_VPWW54_460040.xml</id>
-    <updated>2026-11-27T01:58:06Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015808_0_VPWW54_471000.xml</id>
+    <updated>2026-11-27T01:58:07Z</updated>
     <author>
-      <name>名瀬測候所</name>
+      <name>沖縄気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015807_0_VPWW54_460040.xml"/>
-    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や高波、竜巻などの激しい突風、落雷、落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015808_0_VPWW54_471000.xml"/>
+    <content type="text">【沖縄本島地方気象警報・注意報】〈危険警報（土砂災害）〉本島北部では、土砂災害に厳重に警戒してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -3230,6 +3250,16 @@
       <name>名瀬測候所</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015807_0_VPWW53_460040.xml"/>
+    <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や高波、竜巻などの激しい突風、落雷、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015807_0_VPWW54_460040.xml</id>
+    <updated>2026-11-27T01:58:06Z</updated>
+    <author>
+      <name>名瀬測候所</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015807_0_VPWW54_460040.xml"/>
     <content type="text">【奄美地方（鹿児島県）気象警報・注意報】奄美地方では、土砂災害や高波、竜巻などの激しい突風、落雷、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -3253,16 +3283,6 @@
     <content type="text">【高知県気象警報・注意報】高知県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015802_0_VPWW53_420000.xml</id>
-    <updated>2026-11-27T01:58:01Z</updated>
-    <author>
-      <name>長崎地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015802_0_VPWW53_420000.xml"/>
-    <content type="text">【長崎県気象警報・注意報】北部、壱岐・対馬では、強風に注意してください。長崎県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127015802_0_VPWW54_420000.xml</id>
     <updated>2026-11-27T01:58:01Z</updated>
@@ -3274,13 +3294,13 @@
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015801_0_VPWW53_410000.xml</id>
-    <updated>2026-11-27T01:58:00Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015802_0_VPWW53_420000.xml</id>
+    <updated>2026-11-27T01:58:01Z</updated>
     <author>
-      <name>佐賀地方気象台</name>
+      <name>長崎地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015801_0_VPWW53_410000.xml"/>
-    <content type="text">【佐賀県気象警報・注意報】北部では、強風に注意してください。佐賀県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015802_0_VPWW53_420000.xml"/>
+    <content type="text">【長崎県気象警報・注意報】北部、壱岐・対馬では、強風に注意してください。長崎県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -3290,6 +3310,16 @@
       <name>佐賀地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015801_0_VPWW54_410000.xml"/>
+    <content type="text">【佐賀県気象警報・注意報】北部では、強風に注意してください。佐賀県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015801_0_VPWW53_410000.xml</id>
+    <updated>2026-11-27T01:58:00Z</updated>
+    <author>
+      <name>佐賀地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015801_0_VPWW53_410000.xml"/>
     <content type="text">【佐賀県気象警報・注意報】北部では、強風に注意してください。佐賀県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -3313,16 +3343,6 @@
     <content type="text">【福岡県気象警報・注意報】福岡、北九州地方では、強風に注意してください。福岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015758_0_VPWW53_290000.xml</id>
-    <updated>2026-11-27T01:57:57Z</updated>
-    <author>
-      <name>奈良地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015758_0_VPWW53_290000.xml"/>
-    <content type="text">【奈良県気象警報・注意報】奈良県では、落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127015758_0_VPWW54_290000.xml</id>
     <updated>2026-11-27T01:57:57Z</updated>
@@ -3330,6 +3350,16 @@
       <name>奈良地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015758_0_VPWW54_290000.xml"/>
+    <content type="text">【奈良県気象警報・注意報】奈良県では、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015758_0_VPWW53_290000.xml</id>
+    <updated>2026-11-27T01:57:57Z</updated>
+    <author>
+      <name>奈良地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015758_0_VPWW53_290000.xml"/>
     <content type="text">【奈良県気象警報・注意報】奈良県では、落雷に注意してください。</content>
   </entry>
   <entry>
@@ -3353,16 +3383,6 @@
     <content type="text">【和歌山県気象警報・注意報】和歌山県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015754_0_VPWW54_350000.xml</id>
-    <updated>2026-11-27T01:57:52Z</updated>
-    <author>
-      <name>下関地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015754_0_VPWW54_350000.xml"/>
-    <content type="text">【山口県気象警報・注意報】西部、北部では、強風に注意してください。山口県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127015754_0_VPWW53_350000.xml</id>
     <updated>2026-11-27T01:57:52Z</updated>
@@ -3370,6 +3390,16 @@
       <name>下関地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015754_0_VPWW53_350000.xml"/>
+    <content type="text">【山口県気象警報・注意報】西部、北部では、強風に注意してください。山口県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015754_0_VPWW54_350000.xml</id>
+    <updated>2026-11-27T01:57:52Z</updated>
+    <author>
+      <name>下関地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015754_0_VPWW54_350000.xml"/>
     <content type="text">【山口県気象警報・注意報】西部、北部では、強風に注意してください。山口県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -3413,16 +3443,6 @@
     <content type="text">【新潟県気象警報・注意報】下越、佐渡では、高波に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015525_0_VPFJ51_160000.xml</id>
-    <updated>2026-11-27T01:55:24Z</updated>
-    <author>
-      <name>富山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015525_0_VPFJ51_160000.xml"/>
-    <content type="text">【富山県気象解説情報（落雷・突風・降ひょう）】富山県では、２８日朝から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127015525_0_VPFJ50_160000.xml</id>
     <updated>2026-11-27T01:55:24Z</updated>
@@ -3430,6 +3450,16 @@
       <name>富山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015525_0_VPFJ50_160000.xml"/>
+    <content type="text">【富山県気象解説情報（落雷・突風・降ひょう）】富山県では、２８日朝から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015525_0_VPFJ51_160000.xml</id>
+    <updated>2026-11-27T01:55:24Z</updated>
+    <author>
+      <name>富山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015525_0_VPFJ51_160000.xml"/>
     <content type="text">【富山県気象解説情報（落雷・突風・降ひょう）】富山県では、２８日朝から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3473,16 +3503,6 @@
     <content type="text">【島根県気象解説情報（落雷・突風）】島根県では、２７日夜から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015206_0_VPFJ51_180000.xml</id>
-    <updated>2026-11-27T01:52:06Z</updated>
-    <author>
-      <name>福井地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015206_0_VPFJ51_180000.xml"/>
-    <content type="text">【福井県気象解説情報（落雷・突風・降ひょう）】福井県では、２８日朝から２９日にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127015206_0_VPFJ50_180000.xml</id>
     <updated>2026-11-27T01:52:06Z</updated>
@@ -3490,6 +3510,16 @@
       <name>福井地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015206_0_VPFJ50_180000.xml"/>
+    <content type="text">【福井県気象解説情報（落雷・突風・降ひょう）】福井県では、２８日朝から２９日にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127015206_0_VPFJ51_180000.xml</id>
+    <updated>2026-11-27T01:52:06Z</updated>
+    <author>
+      <name>福井地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127015206_0_VPFJ51_180000.xml"/>
     <content type="text">【福井県気象解説情報（落雷・突風・降ひょう）】福井県では、２８日朝から２９日にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3533,16 +3563,6 @@
     <content type="text">【胆振・日高地方気象解説情報（落雷・突風・降ひょう）】胆振・日高地方では、２７日夜遅くから２８日夕方にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127014533_0_VPFJ51_017000.xml</id>
-    <updated>2026-11-27T01:45:32Z</updated>
-    <author>
-      <name>函館地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014533_0_VPFJ51_017000.xml"/>
-    <content type="text">【渡島・檜山地方気象解説情報（落雷・突風・降ひょう）】渡島・檜山地方では、２７日夜遅くから２８日夕方にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127014533_0_VPFJ50_017000.xml</id>
     <updated>2026-11-27T01:45:32Z</updated>
@@ -3553,14 +3573,14 @@
     <content type="text">【渡島・檜山地方気象解説情報（落雷・突風・降ひょう）】渡島・檜山地方では、２７日夜遅くから２８日夕方にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127014525_0_VPCJ50_400000.xml</id>
-    <updated>2026-11-27T01:45:25Z</updated>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127014533_0_VPFJ51_017000.xml</id>
+    <updated>2026-11-27T01:45:32Z</updated>
     <author>
-      <name>福岡管区気象台</name>
+      <name>函館地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014525_0_VPCJ50_400000.xml"/>
-    <content type="text">【九州北部地方（山口県を含む）気象解説情報（落雷・突風・降ひょう）】九州北部地方では２７日夕方から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014533_0_VPFJ51_017000.xml"/>
+    <content type="text">【渡島・檜山地方気象解説情報（落雷・突風・降ひょう）】渡島・檜山地方では、２７日夜遅くから２８日夕方にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>地方気象解説情報</title>
@@ -3570,6 +3590,16 @@
       <name>福岡管区気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014525_0_VPCJ51_400000.xml"/>
+    <content type="text">【九州北部地方（山口県を含む）気象解説情報（落雷・突風・降ひょう）】九州北部地方では２７日夕方から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>地方気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127014525_0_VPCJ50_400000.xml</id>
+    <updated>2026-11-27T01:45:25Z</updated>
+    <author>
+      <name>福岡管区気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014525_0_VPCJ50_400000.xml"/>
     <content type="text">【九州北部地方（山口県を含む）気象解説情報（落雷・突風・降ひょう）】九州北部地方では２７日夕方から２９日午前中にかけて、落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3623,16 +3653,6 @@
     <content type="text">【上川・留萌地方なだれ注意報】上川、留萌地方では、なだれに注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127014311_0_VPFJ51_011000.xml</id>
-    <updated>2026-11-27T01:43:10Z</updated>
-    <author>
-      <name>稚内地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014311_0_VPFJ51_011000.xml"/>
-    <content type="text">【宗谷地方気象解説情報（落雷・突風・降ひょう）】宗谷地方では、２８日未明から昼前にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127014311_0_VPFJ50_011000.xml</id>
     <updated>2026-11-27T01:43:10Z</updated>
@@ -3640,6 +3660,16 @@
       <name>稚内地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014311_0_VPFJ50_011000.xml"/>
+    <content type="text">【宗谷地方気象解説情報（落雷・突風・降ひょう）】宗谷地方では、２８日未明から昼前にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
+  </entry>
+  <entry>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127014311_0_VPFJ51_011000.xml</id>
+    <updated>2026-11-27T01:43:10Z</updated>
+    <author>
+      <name>稚内地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127014311_0_VPFJ51_011000.xml"/>
     <content type="text">【宗谷地方気象解説情報（落雷・突風・降ひょう）】宗谷地方では、２８日未明から昼前にかけて、竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
@@ -3703,16 +3733,6 @@
     <content type="text">【北海道地方気象解説情報（落雷・突風・降ひょう）】日本海側と太平洋側西部では、２７日夜遅くから２８日夕方にかけて竜巻などの激しい突風や落雷、ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127013944_0_VPFJ51_150000.xml</id>
-    <updated>2026-11-27T01:39:44Z</updated>
-    <author>
-      <name>新潟地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013944_0_VPFJ51_150000.xml"/>
-    <content type="text">【新潟県気象解説情報（落雷・突風・降ひょう）】新潟県では、２８日明け方から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>府県気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127013944_0_VPFJ50_150000.xml</id>
     <updated>2026-11-27T01:39:44Z</updated>
@@ -3723,14 +3743,14 @@
     <content type="text">【新潟県気象解説情報（落雷・突風・降ひょう）】新潟県では、２８日明け方から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127013915_0_VPWW53_420000.xml</id>
-    <updated>2026-11-27T01:39:14Z</updated>
+    <title>府県気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127013944_0_VPFJ51_150000.xml</id>
+    <updated>2026-11-27T01:39:44Z</updated>
     <author>
-      <name>長崎地方気象台</name>
+      <name>新潟地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013915_0_VPWW53_420000.xml"/>
-    <content type="text">【長崎県気象警報・注意報】北部、壱岐・対馬では、強風に注意してください。長崎県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013944_0_VPFJ51_150000.xml"/>
+    <content type="text">【新潟県気象解説情報（落雷・突風・降ひょう）】新潟県では、２８日明け方から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
@@ -3740,6 +3760,16 @@
       <name>長崎地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013915_0_VPWW54_420000.xml"/>
+    <content type="text">【長崎県気象警報・注意報】北部、壱岐・対馬では、強風に注意してください。長崎県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127013915_0_VPWW53_420000.xml</id>
+    <updated>2026-11-27T01:39:14Z</updated>
+    <author>
+      <name>長崎地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013915_0_VPWW53_420000.xml"/>
     <content type="text">【長崎県気象警報・注意報】北部、壱岐・対馬では、強風に注意してください。長崎県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -3843,16 +3873,6 @@
     <content type="text">【石川県気象解説情報（落雷・突風・降ひょう）】石川県では、２８日明け方から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127013323_0_VPCJ51_130000.xml</id>
-    <updated>2026-11-27T01:33:23Z</updated>
-    <author>
-      <name>気象庁</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013323_0_VPCJ51_130000.xml"/>
-    <content type="text">【関東甲信地方気象解説情報（大雨・落雷・突風）】関東甲信地方では、２８日未明から朝にかけて、雷を伴った激しい雨が降り、大雨となるおそれがあります。低い土地の浸水、河川の増水に注意・警戒してください。また、落雷や竜巻などの激しい突風、降ひょうに注意してください。</content>
-  </entry>
-  <entry>
     <title>地方気象情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127013323_0_VPCJ50_130000.xml</id>
     <updated>2026-11-27T01:33:23Z</updated>
@@ -3860,6 +3880,16 @@
       <name>気象庁</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013323_0_VPCJ50_130000.xml"/>
+    <content type="text">【関東甲信地方気象解説情報（大雨・落雷・突風）】関東甲信地方では、２８日未明から朝にかけて、雷を伴った激しい雨が降り、大雨となるおそれがあります。低い土地の浸水、河川の増水に注意・警戒してください。また、落雷や竜巻などの激しい突風、降ひょうに注意してください。</content>
+  </entry>
+  <entry>
+    <title>地方気象解説情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127013323_0_VPCJ51_130000.xml</id>
+    <updated>2026-11-27T01:33:23Z</updated>
+    <author>
+      <name>気象庁</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127013323_0_VPCJ51_130000.xml"/>
     <content type="text">【関東甲信地方気象解説情報（大雨・落雷・突風）】関東甲信地方では、２８日未明から朝にかけて、雷を伴った激しい雨が降り、大雨となるおそれがあります。低い土地の浸水、河川の増水に注意・警戒してください。また、落雷や竜巻などの激しい突風、降ひょうに注意してください。</content>
   </entry>
   <entry>
@@ -3883,16 +3913,6 @@
     <content type="text">【北陸地方気象解説情報（落雷・突風・降ひょう）】北陸地方では、２８日明け方から２９日にかけて落雷や竜巻などの激しい突風、降ひょう、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>地方気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127012553_0_VPCJ50_340000.xml</id>
-    <updated>2026-11-27T01:25:52Z</updated>
-    <author>
-      <name>広島地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127012553_0_VPCJ50_340000.xml"/>
-    <content type="text">【中国地方気象解説情報（落雷・突風）】中国地方では、２７日夜から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
-  </entry>
-  <entry>
     <title>地方気象解説情報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127012553_0_VPCJ51_340000.xml</id>
     <updated>2026-11-27T01:25:52Z</updated>
@@ -3903,14 +3923,14 @@
     <content type="text">【中国地方気象解説情報（落雷・突風）】中国地方では、２７日夜から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127012001_0_VPWW54_360000.xml</id>
-    <updated>2026-11-27T01:20:00Z</updated>
+    <title>地方気象情報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127012553_0_VPCJ50_340000.xml</id>
+    <updated>2026-11-27T01:25:52Z</updated>
     <author>
-      <name>徳島地方気象台</name>
+      <name>広島地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127012001_0_VPWW54_360000.xml"/>
-    <content type="text">【徳島県気象警報・注意報】徳島県では、竜巻などの激しい突風や落雷に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127012553_0_VPCJ50_340000.xml"/>
+    <content type="text">【中国地方気象解説情報（落雷・突風）】中国地方では、２７日夜から２９日午前中にかけて落雷、竜巻などの激しい突風、急な強い雨に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -3920,6 +3940,16 @@
       <name>徳島地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127012001_0_VPWW53_360000.xml"/>
+    <content type="text">【徳島県気象警報・注意報】徳島県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127012001_0_VPWW54_360000.xml</id>
+    <updated>2026-11-27T01:20:00Z</updated>
+    <author>
+      <name>徳島地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127012001_0_VPWW54_360000.xml"/>
     <content type="text">【徳島県気象警報・注意報】徳島県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -4014,16 +4044,6 @@
     <content type="text">【奄美地方（鹿児島県）雷注意報】奄美地方では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127011347_0_VPWW53_260000.xml</id>
-    <updated>2026-11-27T01:13:46Z</updated>
-    <author>
-      <name>京都地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127011347_0_VPWW53_260000.xml"/>
-    <content type="text">【京都府気象警報・注意報】注意報を解除します。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127011347_0_VPWW54_260000.xml</id>
     <updated>2026-11-27T01:13:46Z</updated>
@@ -4031,6 +4051,16 @@
       <name>京都地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127011347_0_VPWW54_260000.xml"/>
+    <content type="text">【京都府気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127011347_0_VPWW53_260000.xml</id>
+    <updated>2026-11-27T01:13:46Z</updated>
+    <author>
+      <name>京都地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127011347_0_VPWW53_260000.xml"/>
     <content type="text">【京都府気象警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
@@ -4064,16 +4094,6 @@
     <content type="text">【山形県気象警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127011312_0_VPWW53_050000.xml</id>
-    <updated>2026-11-27T01:13:11Z</updated>
-    <author>
-      <name>秋田地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127011312_0_VPWW53_050000.xml"/>
-    <content type="text">【秋田県気象警報・注意報】秋田県では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127011312_0_VPWW54_050000.xml</id>
     <updated>2026-11-27T01:13:11Z</updated>
@@ -4081,6 +4101,16 @@
       <name>秋田地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127011312_0_VPWW54_050000.xml"/>
+    <content type="text">【秋田県気象警報・注意報】秋田県では、濃霧による視程障害に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127011312_0_VPWW53_050000.xml</id>
+    <updated>2026-11-27T01:13:11Z</updated>
+    <author>
+      <name>秋田地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127011312_0_VPWW53_050000.xml"/>
     <content type="text">【秋田県気象警報・注意報】秋田県では、濃霧による視程障害に注意してください。</content>
   </entry>
   <entry>
@@ -4124,16 +4154,6 @@
     <content type="text">【秋田県波浪警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010734_0_VPWW53_400000.xml</id>
-    <updated>2026-11-27T01:07:32Z</updated>
-    <author>
-      <name>福岡管区気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010734_0_VPWW53_400000.xml"/>
-    <content type="text">【福岡県気象警報・注意報】福岡、北九州地方では、強風に注意してください。福岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127010733_0_VPWW54_400000.xml</id>
     <updated>2026-11-27T01:07:32Z</updated>
@@ -4144,14 +4164,14 @@
     <content type="text">【福岡県気象警報・注意報】福岡、北九州地方では、強風に注意してください。福岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010732_0_VPWW58_400000.xml</id>
-    <updated>2026-11-27T01:07:31Z</updated>
+    <title>気象特別警報・警報・注意報</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010734_0_VPWW53_400000.xml</id>
+    <updated>2026-11-27T01:07:32Z</updated>
     <author>
       <name>福岡管区気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010732_0_VPWW58_400000.xml"/>
-    <content type="text">【福岡県暴風（雪）警報・注意報】福岡、北九州地方では、強風に注意してください。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010734_0_VPWW53_400000.xml"/>
+    <content type="text">【福岡県気象警報・注意報】福岡、北九州地方では、強風に注意してください。福岡県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
@@ -4162,6 +4182,16 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010731_0_VPWW61_400000.xml"/>
     <content type="text">【福岡県雷注意報】福岡県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｒ０６）（暴風）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010732_0_VPWW58_400000.xml</id>
+    <updated>2026-11-27T01:07:31Z</updated>
+    <author>
+      <name>福岡管区気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010732_0_VPWW58_400000.xml"/>
+    <content type="text">【福岡県暴風（雪）警報・注意報】福岡、北九州地方では、強風に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -4184,16 +4214,6 @@
     <content type="text">【山口県気象警報・注意報】西部、北部では、強風に注意してください。山口県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010722_0_VPWW61_350000.xml</id>
-    <updated>2026-11-27T01:07:21Z</updated>
-    <author>
-      <name>下関地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010722_0_VPWW61_350000.xml"/>
-    <content type="text">【山口県雷注意報】山口県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象警報・注意報（Ｒ０６）（暴風）</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127010722_0_VPWW58_350000.xml</id>
     <updated>2026-11-27T01:07:21Z</updated>
@@ -4204,14 +4224,14 @@
     <content type="text">【山口県暴風（雪）警報・注意報】西部、北部では、強風に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010514_0_VPWW54_330000.xml</id>
-    <updated>2026-11-27T01:05:13Z</updated>
+    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010722_0_VPWW61_350000.xml</id>
+    <updated>2026-11-27T01:07:21Z</updated>
     <author>
-      <name>岡山地方気象台</name>
+      <name>下関地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010514_0_VPWW54_330000.xml"/>
-    <content type="text">【岡山県気象警報・注意報】注意報を解除します。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010722_0_VPWW61_350000.xml"/>
+    <content type="text">【山口県雷注意報】山口県では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -4221,6 +4241,16 @@
       <name>岡山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010514_0_VPWW53_330000.xml"/>
+    <content type="text">【岡山県気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127010514_0_VPWW54_330000.xml</id>
+    <updated>2026-11-27T01:05:13Z</updated>
+    <author>
+      <name>岡山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127010514_0_VPWW54_330000.xml"/>
     <content type="text">【岡山県気象警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
@@ -4294,16 +4324,6 @@
     <content type="text">【新潟県濃霧注意報】注意報を解除します。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127005726_0_VPWW54_473000.xml</id>
-    <updated>2026-11-27T00:57:26Z</updated>
-    <author>
-      <name>宮古島地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005726_0_VPWW54_473000.xml"/>
-    <content type="text">【宮古島地方気象警報・注意報】注意報を解除します。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127005726_0_VPWW53_473000.xml</id>
     <updated>2026-11-27T00:57:26Z</updated>
@@ -4315,13 +4335,13 @@
   </entry>
   <entry>
     <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127005722_0_VPWW54_030000.xml</id>
-    <updated>2026-11-27T00:57:21Z</updated>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127005726_0_VPWW54_473000.xml</id>
+    <updated>2026-11-27T00:57:26Z</updated>
     <author>
-      <name>盛岡地方気象台</name>
+      <name>宮古島地方気象台</name>
     </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005722_0_VPWW54_030000.xml"/>
-    <content type="text">【岩手県気象警報・注意報】注意報を解除します。</content>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005726_0_VPWW54_473000.xml"/>
+    <content type="text">【宮古島地方気象警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
     <title>気象特別警報・警報・注意報</title>
@@ -4331,6 +4351,16 @@
       <name>盛岡地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005722_0_VPWW53_030000.xml"/>
+    <content type="text">【岩手県気象警報・注意報】注意報を解除します。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127005722_0_VPWW54_030000.xml</id>
+    <updated>2026-11-27T00:57:21Z</updated>
+    <author>
+      <name>盛岡地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005722_0_VPWW54_030000.xml"/>
     <content type="text">【岩手県気象警報・注意報】注意報を解除します。</content>
   </entry>
   <entry>
@@ -4404,16 +4434,6 @@
     <content type="text">【奈良県気象警報・注意報】奈良県では、落雷に注意してください。</content>
   </entry>
   <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261127005427_0_VPWW54_300000.xml</id>
-    <updated>2026-11-27T00:54:26Z</updated>
-    <author>
-      <name>和歌山地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005427_0_VPWW54_300000.xml"/>
-    <content type="text">【和歌山県気象警報・注意報】和歌山県では、竜巻などの激しい突風や落雷に注意してください。</content>
-  </entry>
-  <entry>
     <title>気象特別警報・警報・注意報</title>
     <id>https://www.data.jma.go.jp/developer/xml/data/20261127005427_0_VPWW53_300000.xml</id>
     <updated>2026-11-27T00:54:26Z</updated>
@@ -4421,6 +4441,16 @@
       <name>和歌山地方気象台</name>
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005427_0_VPWW53_300000.xml"/>
+    <content type="text">【和歌山県気象警報・注意報】和歌山県では、竜巻などの激しい突風や落雷に注意してください。</content>
+  </entry>
+  <entry>
+    <title>気象警報・注意報（Ｈ２７）</title>
+    <id>https://www.data.jma.go.jp/developer/xml/data/20261127005427_0_VPWW54_300000.xml</id>
+    <updated>2026-11-27T00:54:26Z</updated>
+    <author>
+      <name>和歌山地方気象台</name>
+    </author>
+    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127005427_0_VPWW54_300000.xml"/>
     <content type="text">【和歌山県気象警報・注意報】和歌山県では、竜巻などの激しい突風や落雷に注意してください。</content>
   </entry>
   <entry>
@@ -4622,95 +4652,5 @@
     </author>
     <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261127003844_0_VPWW61_280000.xml"/>
     <content type="text">【兵庫県雷・濃霧注意報】南部では、竜巻などの激しい突風や急な強い雨、落雷に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126230708_0_VPWW54_170000.xml</id>
-    <updated>2026-11-26T23:07:07Z</updated>
-    <author>
-      <name>金沢地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126230708_0_VPWW54_170000.xml"/>
-    <content type="text">【石川県気象警報・注意報】能登では、高波に注意してください。加賀では、空気の乾燥した状態が続くため、火の取り扱いに注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126230709_0_VPWW53_170000.xml</id>
-    <updated>2026-11-26T23:07:07Z</updated>
-    <author>
-      <name>金沢地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126230709_0_VPWW53_170000.xml"/>
-    <content type="text">【石川県気象警報・注意報】能登では、高波に注意してください。加賀では、空気の乾燥した状態が続くため、火の取り扱いに注意してください。</content>
-  </entry>
-  <entry>
-    <title>府県気象解説情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126225508_0_VPFJ51_471000.xml</id>
-    <updated>2026-11-26T22:55:07Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126225508_0_VPFJ51_471000.xml"/>
-    <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島北部では、２７日昼過ぎまで土砂災害や低い土地の浸水、河川の増水や氾濫に厳重に警戒してください。本島中南部でも、低い土地の浸水や河川の増水、氾濫に警戒し、土砂災害に十分注意してください。沖縄本島地方では、２７日昼過ぎまで落雷や竜巻などの激しい突風にも十分注意してください。</content>
-  </entry>
-  <entry>
-    <title>府県気象情報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126225508_0_VPFJ50_471000.xml</id>
-    <updated>2026-11-26T22:55:07Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126225508_0_VPFJ50_471000.xml"/>
-    <content type="text">【沖縄本島地方気象解説情報（大雨・落雷・突風）】本島北部では、２７日昼過ぎまで土砂災害や低い土地の浸水、河川の増水や氾濫に厳重に警戒してください。本島中南部でも、低い土地の浸水や河川の増水、氾濫に警戒し、土砂災害に十分注意してください。沖縄本島地方では、２７日昼過ぎまで落雷や竜巻などの激しい突風にも十分注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126225005_0_VPWW53_471000.xml</id>
-    <updated>2026-11-26T22:50:04Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126225005_0_VPWW53_471000.xml"/>
-    <content type="text">【沖縄本島地方気象警報・注意報】〈危険警報（大雨、土砂災害）〉本島北部では、土砂災害や低い土地の浸水に厳重に警戒してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126225005_0_VPWW54_471000.xml</id>
-    <updated>2026-11-26T22:50:04Z</updated>
-    <author>
-      <name>沖縄気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126225005_0_VPWW54_471000.xml"/>
-    <content type="text">【沖縄本島地方気象警報・注意報】〈危険警報（大雨、土砂災害）〉本島北部では、土砂災害や低い土地の浸水に厳重に警戒してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｈ２７）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126224347_0_VPWW54_150000.xml</id>
-    <updated>2026-11-26T22:43:46Z</updated>
-    <author>
-      <name>新潟地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126224347_0_VPWW54_150000.xml"/>
-    <content type="text">【新潟県気象警報・注意報】下越、佐渡では、高波に注意してください。下越、中越では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象特別警報・警報・注意報</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126224347_0_VPWW53_150000.xml</id>
-    <updated>2026-11-26T22:43:46Z</updated>
-    <author>
-      <name>新潟地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126224347_0_VPWW53_150000.xml"/>
-    <content type="text">【新潟県気象警報・注意報】下越、佐渡では、高波に注意してください。下越、中越では、濃霧による視程障害に注意してください。</content>
-  </entry>
-  <entry>
-    <title>気象警報・注意報（Ｒ０６）（その他注意報）</title>
-    <id>https://www.data.jma.go.jp/developer/xml/data/20261126224341_0_VPWW61_150000.xml</id>
-    <updated>2026-11-26T22:43:40Z</updated>
-    <author>
-      <name>新潟地方気象台</name>
-    </author>
-    <link type="application/xml" href="https://www.data.jma.go.jp/developer/xml/data/20261126224341_0_VPWW61_150000.xml"/>
-    <content type="text">【新潟県濃霧・霜注意報】下越、中越では、濃霧による視程障害に注意してください。</content>
   </entry>
 </feed>

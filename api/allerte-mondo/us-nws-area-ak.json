@@ -10,6 +10,168 @@
     "type": "FeatureCollection",
     "features": [
         {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec560226930f6f44799bad6c441e0fff06ef525a.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec560226930f6f44799bad6c441e0fff06ef525a.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.ec560226930f6f44799bad6c441e0fff06ef525a.001.1",
+                "areaDesc": "Skilak Lake; Southern Kenai Mtns; Interior Kenai Peninsula; Turnagain Pass",
+                "geocode": {
+                    "SAME": [
+                        "002122"
+                    ],
+                    "UGC": [
+                        "AKZ724",
+                        "AKZ725",
+                        "AKZ726",
+                        "AKZ727"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ724",
+                    "https://api.weather.gov/zones/forecast/AKZ725",
+                    "https://api.weather.gov/zones/forecast/AKZ726",
+                    "https://api.weather.gov/zones/forecast/AKZ727"
+                ],
+                "references": [],
+                "sent": "2026-11-27T00:22:00-09:00",
+                "effective": "2026-11-27T00:22:00-09:00",
+                "onset": "2026-11-27T00:22:00-09:00",
+                "expires": "2026-11-27T06:00:00-09:00",
+                "ends": "2026-11-27T06:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 27 at 12:22AM AKST until November 27 at 6:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Light freezing rain and freezing drizzle. Ice accumulations\naround a light glaze.\n\n* WHERE...Turnagain Pass south to Cooper Landing and Seward.\n\n* WHEN...Until 6 AM AKST early this morning.\n\n* IMPACTS...Travel could be very difficult.\n\n* ADDITIONAL DETAILS...Areas of very light freezing rain and freezing\ndrizzle persist across the Seward Highway corridor from Seward\nthrough Cooper Landing and Turnagain Pass. These areas of light\nfreezing rain will remain likely through early Friday morning.",
+                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 270922"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY IN EFFECT UNTIL 6 AM AKST EARLY THIS MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFC.WW.Y.0063.261127T0922Z-261127T1500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T06:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec560226930f6f44799bad6c441e0fff06ef525a.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ec560226930f6f44799bad6c441e0fff06ef525a.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.ec560226930f6f44799bad6c441e0fff06ef525a.002.1",
+                "areaDesc": "Valdez; Thompson Pass; Cordova",
+                "geocode": {
+                    "SAME": [
+                        "002063"
+                    ],
+                    "UGC": [
+                        "AKZ731",
+                        "AKZ732",
+                        "AKZ735"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ731",
+                    "https://api.weather.gov/zones/forecast/AKZ732",
+                    "https://api.weather.gov/zones/forecast/AKZ735"
+                ],
+                "references": [],
+                "sent": "2026-11-27T00:22:00-09:00",
+                "effective": "2026-11-27T00:22:00-09:00",
+                "onset": "2026-11-27T00:22:00-09:00",
+                "expires": "2026-11-27T06:00:00-09:00",
+                "ends": "2026-11-27T06:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 27 at 12:22AM AKST until November 27 at 6:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Light freezing rain and freezing drizzle. Ice accumulations\naround a light glaze.\n\n* WHERE...Cordova, Valdez, and Keystone Canyon to Thompson Pass.\n\n* WHEN...Until 6 AM AKST early this morning.\n\n* IMPACTS...Travel could be very difficult.\n\n* ADDITIONAL DETAILS...Areas of very light freezing rain and freezing\ndrizzle persist across the Prince William Sound coast, including\nCordova and Valdez. These areas of light freezing rain will remain\nlikely through early Friday morning before changing to rain around\nCordova and to snow from Valdez to Thompson Pass.",
+                "instruction": "Slow down and use caution while traveling. For the latest road\nconditions call 5 1 1 or visit 511.alaska.gov.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWAER"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFC 270922"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY IN EFFECT UNTIL 6 AM AKST EARLY THIS MORNING"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFC.WW.Y.0063.261127T0922Z-261127T1500Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T06:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.97ff926abcf043d3297df8fc2072627b4229ca61.001.1",
             "type": "Feature",
             "geometry": null,
@@ -332,79 +494,6 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
-                "areaDesc": "St Lawrence Island",
-                "geocode": {
-                    "SAME": [
-                        "002180"
-                    ],
-                    "UGC": [
-                        "AKZ827"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ827"
-                ],
-                "references": [],
-                "sent": "2026-11-26T11:59:00-09:00",
-                "effective": "2026-11-26T11:59:00-09:00",
-                "onset": "2026-11-26T11:59:00-09:00",
-                "expires": "2026-11-27T07:00:00-09:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
-                "urgency": "Expected",
-                "event": "Special Weather Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Special Weather Statement issued November 26 at 11:59AM AKST by NWS Fairbanks AK",
-                "description": "Periods of snow are likely Thursday and Friday with southeast\nwinds gusting up to 45 mph. This will likely result in lowered\nvisibility to 1 mile or less at times. Temperatures will be\nhovering near 32 degrees which means blowing snow will only be\nexpected when it is actively snowing. Total snow accumulations\naround 2 to 4 inches expected through Friday evening.",
-                "instruction": null,
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "SPSWCZ"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK82 PAFG 262059"
-                    ],
-                    "NWSheadline": [
-                        "SNOW AND WIND THURSDAY AND FRIDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "SPS"
-                    ],
-                    "NationalWeatherService": [
-                        "SPS"
-                    ]
-                }
-            }
-        },
-        {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.002.1",
             "type": "Feature",
             "geometry": null,
@@ -453,6 +542,79 @@
                     ],
                     "NWSheadline": [
                         "SNOW AND WIND LATE THURSDAY THROUGH FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
+                "areaDesc": "St Lawrence Island",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ827"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ827"
+                ],
+                "references": [],
+                "sent": "2026-11-26T11:59:00-09:00",
+                "effective": "2026-11-26T11:59:00-09:00",
+                "onset": "2026-11-26T11:59:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Special Weather Statement issued November 26 at 11:59AM AKST by NWS Fairbanks AK",
+                "description": "Periods of snow are likely Thursday and Friday with southeast\nwinds gusting up to 45 mph. This will likely result in lowered\nvisibility to 1 mile or less at times. Temperatures will be\nhovering near 32 degrees which means blowing snow will only be\nexpected when it is actively snowing. Total snow accumulations\naround 2 to 4 inches expected through Friday evening.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK82 PAFG 262059"
+                    ],
+                    "NWSheadline": [
+                        "SNOW AND WIND THURSDAY AND FRIDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -882,5 +1044,5 @@
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-27T08:55:19+00:00"
+    "updated": "2026-11-27T09:25:14+00:00"
 }
