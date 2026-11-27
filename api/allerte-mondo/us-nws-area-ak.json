@@ -10,30 +10,34 @@
     "type": "FeatureCollection",
     "features": [
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a94337755633e1eace8acf8351260877a3821b1.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.97ff926abcf043d3297df8fc2072627b4229ca61.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a94337755633e1eace8acf8351260877a3821b1.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.97ff926abcf043d3297df8fc2072627b4229ca61.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.0a94337755633e1eace8acf8351260877a3821b1.001.1",
-                "areaDesc": "St Lawrence Island",
+                "id": "urn:oid:2.49.0.1.840.0.97ff926abcf043d3297df8fc2072627b4229ca61.001.1",
+                "areaDesc": "Anchorage; Anchorage Hillside / Eagle River; East Turnagain Arm",
                 "geocode": {
                     "SAME": [
-                        "002180"
+                        "002020"
                     ],
                     "UGC": [
-                        "AKZ827"
+                        "AKZ701",
+                        "AKZ702",
+                        "AKZ703"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ827"
+                    "https://api.weather.gov/zones/forecast/AKZ701",
+                    "https://api.weather.gov/zones/forecast/AKZ702",
+                    "https://api.weather.gov/zones/forecast/AKZ703"
                 ],
                 "references": [],
-                "sent": "2026-11-26T03:39:00-09:00",
-                "effective": "2026-11-26T03:39:00-09:00",
-                "onset": "2026-11-26T03:39:00-09:00",
-                "expires": "2026-11-26T16:00:00-09:00",
+                "sent": "2026-11-26T20:58:00-09:00",
+                "effective": "2026-11-26T20:58:00-09:00",
+                "onset": "2026-11-26T20:58:00-09:00",
+                "expires": "2026-11-27T01:00:00-09:00",
                 "ends": null,
                 "status": "Actual",
                 "messageType": "Alert",
@@ -43,21 +47,21 @@
                 "urgency": "Expected",
                 "event": "Special Weather Statement",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Special Weather Statement issued November 26 at 3:39AM AKST by NWS Fairbanks AK",
-                "description": "Periods of snow are likely today and Friday with southeast winds\ngusting up to 45 mph. This will likely result in lowered\nvisibility to 1 mile or less at times. Temperatures will be\nhovering near 32 degrees which means blowing snow will only be\nexpected when it is actively snowing. Total snow accumulations\naround 1 to 3 inches expected through Friday evening.",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Special Weather Statement issued November 26 at 8:58PM AKST by NWS Anchorage AK",
+                "description": "Freezing rain has been observed across portions of Anchorage and\nthe Seward Highway this evening. Freezing rain mixed with snow is\nexpected to continue over the next couple of hours until\ntemperatures aloft cool enough to transition precipitation to all\nsnow. Snow is expected overnight tonight through 9AM tomorrow\nmorning. Snow accumulations of 2 to 4 inches possible with little\nto no ice accumulation. Slippery conditions expected, use caution\nwhen driving.",
                 "instruction": null,
                 "response": "Execute",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "SPSWCZ"
+                        "SPSAER"
                     ],
                     "WMOidentifier": [
-                        "WWAK82 PAFG 261239"
+                        "WWAK81 PAFC 270558"
                     ],
                     "NWSheadline": [
-                        "Snow and Wind Likely Today and Friday"
+                        "FREEZING RAIN AND SNOW EXPECTED TONIGHT"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -83,157 +87,75 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.697a20ee9b0156dda6c849e7cc3fe57f6eff4af3.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.81ee47a98a0a7d41f5f91ccc07567c7f47137865.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.697a20ee9b0156dda6c849e7cc3fe57f6eff4af3.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.81ee47a98a0a7d41f5f91ccc07567c7f47137865.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.697a20ee9b0156dda6c849e7cc3fe57f6eff4af3.001.1",
-                "areaDesc": "City and Borough of Sitka; Western Kupreanof and Kuiu Island; City and Borough of Wrangell; Ketchikan Gateway Borough",
+                "id": "urn:oid:2.49.0.1.840.0.81ee47a98a0a7d41f5f91ccc07567c7f47137865.001.1",
+                "areaDesc": "Kuskokwim Delta Coast and Nunivak Island",
                 "geocode": {
                     "SAME": [
-                        "002220",
-                        "002198",
-                        "002275",
-                        "002130"
+                        "002050"
                     ],
                     "UGC": [
-                        "AKZ323",
-                        "AKZ327",
-                        "AKZ329",
-                        "AKZ330"
+                        "AKZ755"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ323",
-                    "https://api.weather.gov/zones/forecast/AKZ327",
-                    "https://api.weather.gov/zones/forecast/AKZ329",
-                    "https://api.weather.gov/zones/forecast/AKZ330"
-                ],
-                "references": [],
-                "sent": "2026-11-26T02:45:00-09:00",
-                "effective": "2026-11-26T02:45:00-09:00",
-                "onset": "2026-11-26T02:45:00-09:00",
-                "expires": "2026-11-26T14:45:00-09:00",
-                "ends": null,
-                "status": "Actual",
-                "messageType": "Alert",
-                "category": "Met",
-                "severity": "Moderate",
-                "certainty": "Observed",
-                "urgency": "Expected",
-                "event": "Special Weather Statement",
-                "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Juneau AK",
-                "headline": "Special Weather Statement issued November 26 at 2:45AM AKST by NWS Juneau AK",
-                "description": "Tidal levels across the panhandle are expected to be running high\nfor the next few days. These high tides combined with passing low\npressures and their associated fronts could create some\npotentially higher than normal water levels. Confidence has\nincreased for a slightly weaker system moving into the panhandle\nduring peak tides. Tides may exceed astronomical high tide, though\nthe likelihood of exceeding a foot has been reduced significantly.",
-                "instruction": null,
-                "response": "Execute",
-                "note": null,
-                "parameters": {
-                    "AWIPSidentifier": [
-                        "SPSAJK"
-                    ],
-                    "WMOidentifier": [
-                        "WWAK87 PAJK 261145"
-                    ],
-                    "NWSheadline": [
-                        "HIGH TIDAL WATER LEVELS THROUGH THURSDAY"
-                    ],
-                    "BLOCKCHANNEL": [
-                        "EAS",
-                        "NWEM",
-                        "CMAS"
-                    ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ]
-                },
-                "scope": "Public",
-                "code": "IPAWSv1.0",
-                "language": "en-US",
-                "web": "http://www.weather.gov",
-                "eventCode": {
-                    "SAME": [
-                        "SPS"
-                    ],
-                    "NationalWeatherService": [
-                        "SPS"
-                    ]
-                }
-            }
-        },
-        {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.001.1",
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.001.1",
-                "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.001.1",
-                "areaDesc": "Eastern Beaufort Sea Coast",
-                "geocode": {
-                    "SAME": [
-                        "002185"
-                    ],
-                    "UGC": [
-                        "AKZ805"
-                    ]
-                },
-                "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ805"
+                    "https://api.weather.gov/zones/forecast/AKZ755"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.001.2",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.001.2",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.13a8c08c0a13cadcdc01abec0666f579e4bbce3e.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.13a8c08c0a13cadcdc01abec0666f579e4bbce3e.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T07:52:00-09:00"
+                        "sent": "2026-11-26T05:28:00-09:00"
                     }
                 ],
-                "sent": "2026-11-25T21:54:00-09:00",
-                "effective": "2026-11-25T21:54:00-09:00",
-                "onset": "2026-11-25T21:54:00-09:00",
-                "expires": "2026-11-26T16:00:00-09:00",
-                "ends": "2026-11-27T15:00:00-09:00",
+                "sent": "2026-11-26T13:12:00-09:00",
+                "effective": "2026-11-26T13:12:00-09:00",
+                "onset": "2026-11-26T18:00:00-09:00",
+                "expires": "2026-11-27T13:15:00-09:00",
+                "ends": "2026-11-28T06:00:00-09:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
-                "severity": "Severe",
+                "severity": "Minor",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Winter Storm Warning",
+                "event": "Coastal Flood Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Storm Warning issued November 25 at 9:54PM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Periods of blizzard conditions. Winds gusting as high as 45\nmph.\n\n* WHERE...Point Thompson.\n\n* WHEN...Until 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...Very little additional falling snow is\nexpected. Strong winds will blow snow already on the ground to\ncreate areas of low visibility near the surface. No significant\nvisibility reductions are expected at Barter Island/Kaktovik due to\nopen water limiting the availability of blowable snow to the east.",
-                "instruction": "If you must travel, keep an extra flashlight, food, and water in your\nvehicle in case of an emergency.",
-                "response": "Prepare",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Coastal Flood Advisory issued November 26 at 1:12PM AKST until November 28 at 6:00AM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Coastal Flooding with water levels 1.5 to 3.0 feet\nabove the highest tide line possible.\n\n* WHERE...Kipnuk, Kongiganak, and Kwigillingok.\n\n* WHEN...6 PM Today to 6 AM Saturday. Particularly the overnight\nhigh tide tonight and Friday night.\n\n* IMPACTS...Potential flooding of low lying areas, including\nlowest portions of boardwalks. Coastal erosion possible.\n\n* ADDITIONAL DETAILS...A long duration of onshore winds combined\nwith higher-than-normal tides will increase the potential for\nelevated water levels, high surf, and coastal erosion tonight\nand Friday night. Tides will remain higher than normal into the\nmiddle of next week.",
+                "instruction": "A coastal flood advisory indicates that onshore winds and tides\nwill combine to generate flooding of low areas along the shore.",
+                "response": "Monitor",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "WSWNSB"
+                        "CFWALU"
                     ],
                     "WMOidentifier": [
-                        "WWAK41 PAFG 260654"
+                        "WHAK42 PAFC 262212"
                     ],
                     "NWSheadline": [
-                        "WINTER STORM WARNING REMAINS IN EFFECT UNTIL 3 PM AKST FRIDAY"
+                        "COASTAL FLOOD ADVISORY REMAINS IN EFFECT FROM 6 PM THIS EVENING TO 6 AM AKST SATURDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
                         "NWEM",
                         "CMAS"
                     ],
-                    "EAS-ORG": [
-                        "WXR"
-                    ],
                     "VTEC": [
-                        "/O.CON.PAFG.WS.W.0029.000000T0000Z-261128T0000Z/"
+                        "/O.CON.PAFC.CF.Y.0007.261127T0300Z-261128T1500Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-27T15:00:00-09:00"
+                        "2026-11-28T06:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1,2026-11-25T10:30:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -242,47 +164,47 @@
                 "web": "http://www.weather.gov",
                 "eventCode": {
                     "SAME": [
-                        "WSW"
+                        "NWS"
                     ],
                     "NationalWeatherService": [
-                        "WSW"
+                        "CFY"
                     ]
                 }
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.002.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bbc446f00655c94b6382454730df2631b8a64d8b.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.002.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.bbc446f00655c94b6382454730df2631b8a64d8b.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.002.1",
-                "areaDesc": "Central Beaufort Sea Coast",
+                "id": "urn:oid:2.49.0.1.840.0.bbc446f00655c94b6382454730df2631b8a64d8b.001.1",
+                "areaDesc": "Kuskokwim Delta Coast and Nunivak Island",
                 "geocode": {
                     "SAME": [
-                        "002185"
+                        "002050"
                     ],
                     "UGC": [
-                        "AKZ804"
+                        "AKZ755"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ804"
+                    "https://api.weather.gov/zones/forecast/AKZ755"
                 ],
                 "references": [
                     {
-                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.002.1",
-                        "identifier": "urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.002.1",
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2181cd496135617570a79d106d66982f417bfe80.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.2181cd496135617570a79d106d66982f417bfe80.001.1",
                         "sender": "w-nws.webmaster@noaa.gov",
-                        "sent": "2026-11-25T07:52:00-09:00"
+                        "sent": "2026-11-26T05:44:00-09:00"
                     }
                 ],
-                "sent": "2026-11-25T21:54:00-09:00",
-                "effective": "2026-11-25T21:54:00-09:00",
-                "onset": "2026-11-25T21:54:00-09:00",
-                "expires": "2026-11-26T16:00:00-09:00",
-                "ends": "2026-11-27T15:00:00-09:00",
+                "sent": "2026-11-26T13:04:00-09:00",
+                "effective": "2026-11-26T13:04:00-09:00",
+                "onset": "2026-11-26T13:04:00-09:00",
+                "expires": "2026-11-27T06:30:00-09:00",
+                "ends": "2026-11-27T18:00:00-09:00",
                 "status": "Actual",
                 "messageType": "Update",
                 "category": "Met",
@@ -291,21 +213,21 @@
                 "urgency": "Expected",
                 "event": "Winter Weather Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
-                "senderName": "NWS Fairbanks AK",
-                "headline": "Winter Weather Advisory issued November 25 at 9:54PM AKST until November 27 at 3:00PM AKST by NWS Fairbanks AK",
-                "description": "* WHAT...Blowing Snow. Winds gusting as high as 45 mph.\n\n* WHERE...Central Beaufort Sea Coast.\n\n* WHEN...Until 3 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...No additional falling snow is expected. Strong\nwinds will blow snow already on the ground to create areas of low\nvisibility near the surface. A brief decrease in winds is expected\nWednesday night before winds strengthen once more Thursday.",
-                "instruction": "Use caution while traveling, especially in open areas. Visit\n511.alaska.gov or call 5 1 1 for the latest road conditions.",
+                "senderName": "NWS Anchorage AK",
+                "headline": "Winter Weather Advisory issued November 26 at 1:04PM AKST until November 27 at 6:00PM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Snow and blowing snow expected. Total snow accumulations 3\nto 6 inches. Winds gusting as high as 40 to 50 mph. Visibilities\nreduced to one half mile or less due to blowing snow.\n\n* WHERE...Kuskokwim Delta Coast and Nunivak Island.\n\n* WHEN...Until 6 PM AKST Friday.\n\n* IMPACTS...Travel could be difficult. Areas of blowing snow could\nsignificantly reduce visibility.\n\n* ADDITIONAL DETAILS...Highest chances of blowing snow are on Nunivak\nIsland and along the Kuskokwim Delta Coast north of Kipnuk.\nSoutheast winds become westerly early Friday morning. The strongest\nwind gusts are expected Friday morning after winds become westerly.\nConditions are expected to gradually improve late Friday afternoon\nas snowfall tapers off and winds begin to decrease.",
+                "instruction": "Use caution while traveling.",
                 "response": "Execute",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "WSWNSB"
+                        "WSWALU"
                     ],
                     "WMOidentifier": [
-                        "WWAK41 PAFG 260654"
+                        "WWAK42 PAFC 262204"
                     ],
                     "NWSheadline": [
-                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 3 PM AKST FRIDAY"
+                        "WINTER WEATHER ADVISORY REMAINS IN EFFECT UNTIL 6 PM AKST FRIDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -313,13 +235,10 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.CON.PAFG.WW.Y.0100.000000T0000Z-261128T0000Z/"
+                        "/O.CON.PAFC.WW.Y.0062.000000T0000Z-261128T0300Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-27T15:00:00-09:00"
-                    ],
-                    "expiredReferences": [
-                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1,2026-11-25T06:33:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.74144808c7c9543ef104995c8e6d85f6c224bec8.001.1,2026-11-24T13:45:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1,2026-11-24T06:33:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1,2026-11-23T12:00:00-09:00"
+                        "2026-11-27T18:00:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -337,54 +256,54 @@
             }
         },
         {
-            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.abcff075daef2228cda582a63ea3c3395608bd40.001.1",
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.abcff075daef2228cda582a63ea3c3395608bd40.001.1",
                 "@type": "wx:Alert",
-                "id": "urn:oid:2.49.0.1.840.0.591ee696dc8b417314c2f45bd299c2b4654a5c70.001.1",
-                "areaDesc": "Kuskokwim Delta Coast and Nunivak Island",
+                "id": "urn:oid:2.49.0.1.840.0.abcff075daef2228cda582a63ea3c3395608bd40.001.1",
+                "areaDesc": "SW Kenai Peninsula",
                 "geocode": {
                     "SAME": [
-                        "002050"
+                        "002122"
                     ],
                     "UGC": [
-                        "AKZ755"
+                        "AKZ722"
                     ]
                 },
                 "affectedZones": [
-                    "https://api.weather.gov/zones/forecast/AKZ755"
+                    "https://api.weather.gov/zones/forecast/AKZ722"
                 ],
                 "references": [],
-                "sent": "2026-11-25T10:30:00-09:00",
-                "effective": "2026-11-25T10:30:00-09:00",
-                "onset": "2026-11-26T18:00:00-09:00",
-                "expires": "2026-11-26T06:15:00-09:00",
-                "ends": "2026-11-28T06:00:00-09:00",
+                "sent": "2026-11-26T13:04:00-09:00",
+                "effective": "2026-11-26T13:04:00-09:00",
+                "onset": "2026-11-27T14:00:00-09:00",
+                "expires": "2026-11-27T13:15:00-09:00",
+                "ends": "2026-11-27T20:00:00-09:00",
                 "status": "Actual",
                 "messageType": "Alert",
                 "category": "Met",
                 "severity": "Minor",
                 "certainty": "Likely",
                 "urgency": "Expected",
-                "event": "Coastal Flood Advisory",
+                "event": "High Surf Advisory",
                 "sender": "w-nws.webmaster@noaa.gov",
                 "senderName": "NWS Anchorage AK",
-                "headline": "Coastal Flood Advisory issued November 25 at 10:30AM AKST until November 28 at 6:00AM AKST by NWS Anchorage AK",
-                "description": "* WHAT...Coastal Flooding with water levels 1.5 to 3.0 feet above\nthe highest tide line possible.\n\n* WHERE...Kipnuk and Kwigillingok\n\n* WHEN...6 PM Thursday to 6 AM Saturday. Particularly the\novernight tide cycles Thursday night and Friday night.\n\n* IMPACTS...Potential flooding of low lying areas, including\nlowest portions of boardwalks. Coastal erosion possible.\n\n* ADDITIONAL DETAILS...A long duration of southerly winds combined\nwith the high tide cycle will increase the potential for\nelevated water levels, high surf, and coastal erosion Thursday\nnight and Friday night. For Saturday Night, though winds will be\nweaker and oriented more offshore, the tide cycle will remain\nhigh. Water levels are expected to be lower compared to Thursday\nNight and Friday, however there still is some potential for\ncoastal erosion. Stay tuned for forecast updates.",
-                "instruction": "A coastal flood advisory indicates that onshore winds and tides\nwill combine to generate flooding of low areas along the shore.",
-                "response": "Monitor",
+                "headline": "High Surf Advisory issued November 26 at 1:04PM AKST until November 27 at 8:00PM AKST by NWS Anchorage AK",
+                "description": "* WHAT...Breaking waves of 2 to 4 feet. West-southwest winds 15 to\n20 mph gusting to 25 to 30 mph.\n\n* WHERE...Homer Spit.\n\n* WHEN...2 PM to 8 PM Friday afternoon.\n\n* IMPACTS...Water and light debris could wash over portions of the\nHomer Spit Road. Minor beach erosion is possible.\n\n* ADDITIONAL DETAILS...Friday sees strong west to southwest winds,\nwhich when combined with the high tide could produce minor\nimpacts along the Homer Spit. In addition, the King Tide is also\nanticipated during Friday's afternoon's high tide cycle.",
+                "instruction": "Precautions should be taken to protect property.",
+                "response": "Avoid",
                 "note": null,
                 "parameters": {
                     "AWIPSidentifier": [
-                        "CFWALU"
+                        "CFWAER"
                     ],
                     "WMOidentifier": [
-                        "WHAK42 PAFC 251930"
+                        "WHAK41 PAFC 262204"
                     ],
                     "NWSheadline": [
-                        "COASTAL FLOOD ADVISORY IN EFFECT FROM 6 PM THURSDAY TO 6 AM AKST SATURDAY"
+                        "HIGH SURF ADVISORY IN EFFECT FROM 2 PM TO 8 PM AKST FRIDAY"
                     ],
                     "BLOCKCHANNEL": [
                         "EAS",
@@ -392,10 +311,10 @@
                         "CMAS"
                     ],
                     "VTEC": [
-                        "/O.NEW.PAFC.CF.Y.0007.261127T0300Z-261128T1500Z/"
+                        "/O.NEW.PAFC.SU.Y.0013.261127T2300Z-261128T0500Z/"
                     ],
                     "eventEndingTime": [
-                        "2026-11-28T06:00:00-09:00"
+                        "2026-11-27T20:00:00-09:00"
                     ]
                 },
                 "scope": "Public",
@@ -407,12 +326,561 @@
                         "NWS"
                     ],
                     "NationalWeatherService": [
-                        "CFY"
+                        "SUY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.002.1",
+                "areaDesc": "Yukon Delta Coast",
+                "geocode": {
+                    "SAME": [
+                        "002158"
+                    ],
+                    "UGC": [
+                        "AKZ825"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ825"
+                ],
+                "references": [],
+                "sent": "2026-11-26T11:59:00-09:00",
+                "effective": "2026-11-26T11:59:00-09:00",
+                "onset": "2026-11-26T11:59:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Special Weather Statement issued November 26 at 11:59AM AKST by NWS Fairbanks AK",
+                "description": "Periods of snow become increasingly likely through Thursday as a\nfront approaches the coast. Southeast winds gusting up to 35 mph\nshift southerly and peak up to 40 mph late Friday. The\ncombination of falling snow and strong winds are expected to lead\nto periods of reduced visibility due to blowing snow, with\nvisibilities falling to 1 mile or less at times. Total snow\naccumulations of 1 to 3 inches expected through Friday night. The\nheaviest snow is expected near Cape Romanzof including Chevak,\nHooper Bay, and Scammon Bay.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK82 PAFG 262059"
+                    ],
+                    "NWSheadline": [
+                        "SNOW AND WIND LATE THURSDAY THROUGH FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.464ad7c66cd26c5f3f81f208bbc02f4ddd265a9f.001.1",
+                "areaDesc": "St Lawrence Island",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ827"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ827"
+                ],
+                "references": [],
+                "sent": "2026-11-26T11:59:00-09:00",
+                "effective": "2026-11-26T11:59:00-09:00",
+                "onset": "2026-11-26T11:59:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Special Weather Statement issued November 26 at 11:59AM AKST by NWS Fairbanks AK",
+                "description": "Periods of snow are likely Thursday and Friday with southeast\nwinds gusting up to 45 mph. This will likely result in lowered\nvisibility to 1 mile or less at times. Temperatures will be\nhovering near 32 degrees which means blowing snow will only be\nexpected when it is actively snowing. Total snow accumulations\naround 2 to 4 inches expected through Friday evening.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK82 PAFG 262059"
+                    ],
+                    "NWSheadline": [
+                        "SNOW AND WIND THURSDAY AND FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.66692d341a3ff2a9c58a800afefadca09204f04d.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.66692d341a3ff2a9c58a800afefadca09204f04d.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.66692d341a3ff2a9c58a800afefadca09204f04d.002.1",
+                "areaDesc": "Yukon Delta Coast",
+                "geocode": {
+                    "SAME": [
+                        "002158"
+                    ],
+                    "UGC": [
+                        "AKZ825"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ825"
+                ],
+                "references": [],
+                "sent": "2026-11-26T11:20:00-09:00",
+                "effective": "2026-11-26T11:20:00-09:00",
+                "onset": "2026-11-26T11:20:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Special Weather Statement issued November 26 at 11:20AM AKST by NWS Fairbanks AK",
+                "description": "Periods of snow become increasingly likely through Thursday as a\nfront approaches the coast. Southeast winds gusting up to 35 mph\nshift southerly and peak up to 40 mph late Friday. The\ncombination of falling snow and strong winds are expected to lead\nto periods of reduced visibility due to blowing snow, with\nvisibilities falling to 1 mile or less at times. Total snow\naccumulations of 1 to 3 inches expected through Friday night. The\nheaviest snow is expected near Cape Romanzof including Chevak,\nHooper Bay, and Scammon Bay.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK82 PAFG 262020"
+                    ],
+                    "NWSheadline": [
+                        "SNOW AND WIND LATE THURSDAY THROUGH FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.66692d341a3ff2a9c58a800afefadca09204f04d.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.66692d341a3ff2a9c58a800afefadca09204f04d.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.66692d341a3ff2a9c58a800afefadca09204f04d.001.1",
+                "areaDesc": "St Lawrence Island",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ827"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ827"
+                ],
+                "references": [],
+                "sent": "2026-11-26T11:20:00-09:00",
+                "effective": "2026-11-26T11:20:00-09:00",
+                "onset": "2026-11-26T11:20:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": null,
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Observed",
+                "urgency": "Expected",
+                "event": "Special Weather Statement",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Special Weather Statement issued November 26 at 11:20AM AKST by NWS Fairbanks AK",
+                "description": "Periods of snow are likely Thursday and Friday with southeast\nwinds gusting up to 45 mph. This will likely result in lowered\nvisibility to 1 mile or less at times. Temperatures will be\nhovering near 32 degrees which means blowing snow will only be\nexpected when it is actively snowing. Total snow accumulations\naround 1 to 3 inches expected through Friday evening.",
+                "instruction": null,
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "SPSWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK82 PAFG 262020"
+                    ],
+                    "NWSheadline": [
+                        "SNOW AND WIND THURSDAY AND FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "SPS"
+                    ],
+                    "NationalWeatherService": [
+                        "SPS"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d914e9d1eb1e5c56d7207b8c785d1e6c732c924e.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d914e9d1eb1e5c56d7207b8c785d1e6c732c924e.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d914e9d1eb1e5c56d7207b8c785d1e6c732c924e.001.1",
+                "areaDesc": "Eastern Beaufort Sea Coast",
+                "geocode": {
+                    "SAME": [
+                        "002185"
+                    ],
+                    "UGC": [
+                        "AKZ805"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ805"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.001.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.001.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T21:54:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-26T10:33:00-09:00",
+                "effective": "2026-11-26T10:33:00-09:00",
+                "onset": "2026-11-26T10:33:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": "2026-11-27T22:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Severe",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Storm Warning",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Storm Warning issued November 26 at 10:33AM AKST until November 27 at 10:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Periods of blizzard conditions. Winds gusting as high as 45\nmph.\n\n* WHERE...Point Thompson.\n\n* WHEN...Until 10 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...Very little additional falling snow is\nexpected. Strong winds will blow snow already on the ground to\ncreate areas of low visibility near the surface. No significant\nvisibility reductions are expected at Barter Island/Kaktovik due to\nopen water limiting the availability of blowable snow to the east.",
+                "instruction": "If you must travel, keep an extra flashlight, food, and water in your\nvehicle in case of an emergency.",
+                "response": "Prepare",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWNSB"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFG 261933"
+                    ],
+                    "NWSheadline": [
+                        "WINTER STORM WARNING NOW IN EFFECT UNTIL 10 PM AKST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "EAS-ORG": [
+                        "WXR"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.PAFG.WS.W.0029.000000T0000Z-261128T0700Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T22:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.001.2,2026-11-25T07:52:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "WSW"
+                    ],
+                    "NationalWeatherService": [
+                        "WSW"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d914e9d1eb1e5c56d7207b8c785d1e6c732c924e.002.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d914e9d1eb1e5c56d7207b8c785d1e6c732c924e.002.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.d914e9d1eb1e5c56d7207b8c785d1e6c732c924e.002.1",
+                "areaDesc": "Central Beaufort Sea Coast",
+                "geocode": {
+                    "SAME": [
+                        "002185"
+                    ],
+                    "UGC": [
+                        "AKZ804"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ804"
+                ],
+                "references": [
+                    {
+                        "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.002.1",
+                        "identifier": "urn:oid:2.49.0.1.840.0.432c597076dae8142c0f2ff63950523ea82f7383.002.1",
+                        "sender": "w-nws.webmaster@noaa.gov",
+                        "sent": "2026-11-25T21:54:00-09:00"
+                    }
+                ],
+                "sent": "2026-11-26T10:33:00-09:00",
+                "effective": "2026-11-26T10:33:00-09:00",
+                "onset": "2026-11-26T10:33:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": "2026-11-27T22:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Update",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Weather Advisory issued November 26 at 10:33AM AKST until November 27 at 10:00PM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Blowing Snow. Winds gusting as high as 45 mph.\n\n* WHERE...Central and Eastern Beaufort Sea Coast.\n\n* WHEN...Until 10 PM AKST Friday.\n\n* IMPACTS...Areas of blowing snow could significantly reduce\nvisibility.\n\n* ADDITIONAL DETAILS...Very little additional falling snow is\nexpected. Strong winds will blow snow already on the ground to\ncreate areas of low visibility near the surface. Winds are\nsignificantly weaker farther inland.",
+                "instruction": "Use caution while traveling, especially in open areas. Visit\n511.alaska.gov or call 5 1 1 for the latest road conditions.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWNSB"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK41 PAFG 261933"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY NOW IN EFFECT UNTIL 10 PM AKST FRIDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.EXT.PAFG.WW.Y.0100.000000T0000Z-261128T0700Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-27T22:00:00-09:00"
+                    ],
+                    "expiredReferences": [
+                        "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2326d0b63b00a96b98808b0d5440bafb9c503e9d.002.1,2026-11-25T07:52:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6016ed9ed6ad26a23d02d4e144c0a785240f8943.001.1,2026-11-25T06:33:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.74144808c7c9543ef104995c8e6d85f6c224bec8.001.1,2026-11-24T13:45:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2206b54bdeb324e80ab14d1e5948b10c3542b347.001.1,2026-11-24T06:33:00-09:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.82d942d4bf4ad2abb1825790e1a10e8bc61cae4e.001.1,2026-11-23T12:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0ca02606bcf808c1f2f38a1ee5098e3769dc43a4.001.1",
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0ca02606bcf808c1f2f38a1ee5098e3769dc43a4.001.1",
+                "@type": "wx:Alert",
+                "id": "urn:oid:2.49.0.1.840.0.0ca02606bcf808c1f2f38a1ee5098e3769dc43a4.001.1",
+                "areaDesc": "Shishmaref; Bering Strait Coast; Southern Seward Peninsula Coast; Interior Seward Peninsula",
+                "geocode": {
+                    "SAME": [
+                        "002180"
+                    ],
+                    "UGC": [
+                        "AKZ820",
+                        "AKZ821",
+                        "AKZ822",
+                        "AKZ823"
+                    ]
+                },
+                "affectedZones": [
+                    "https://api.weather.gov/zones/forecast/AKZ820",
+                    "https://api.weather.gov/zones/forecast/AKZ821",
+                    "https://api.weather.gov/zones/forecast/AKZ822",
+                    "https://api.weather.gov/zones/forecast/AKZ823"
+                ],
+                "references": [],
+                "sent": "2026-11-26T10:28:00-09:00",
+                "effective": "2026-11-26T10:28:00-09:00",
+                "onset": "2026-11-27T15:00:00-09:00",
+                "expires": "2026-11-27T07:00:00-09:00",
+                "ends": "2026-11-28T09:00:00-09:00",
+                "status": "Actual",
+                "messageType": "Alert",
+                "category": "Met",
+                "severity": "Moderate",
+                "certainty": "Likely",
+                "urgency": "Expected",
+                "event": "Winter Weather Advisory",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "senderName": "NWS Fairbanks AK",
+                "headline": "Winter Weather Advisory issued November 26 at 10:28AM AKST until November 28 at 9:00AM AKST by NWS Fairbanks AK",
+                "description": "* WHAT...Snow and blowing snow expected. Total snow accumulations up\nto two inches. Winds gusting up to 40 mph.\n\n* WHERE...Bering Strait Coast, Interior Seward Peninsula, Diomede,\nand Southern Seward Peninsula Coast.\n\n* WHEN...From 3 PM Friday to 9 AM AKST Saturday.\n\n* IMPACTS...Travel may be impacted. Blowing and falling snow could\nreduce visibility to 1/2 mile or less at times.\n\n* ADDITIONAL DETAILS...Snow totals of 0.5 to 2 inches expected for\nmost locations. South facing slopes along the southern Seward\nPeninsula including near Nome could see up to 3 inches of snow.\nWinds peak overnight Friday into Saturday and rapidly weaken\nthrough Saturday.",
+                "instruction": "Slow down and use caution while traveling. Visit 511.alaska.gov or\ncall 5 1 1 for the latest road conditions.",
+                "response": "Execute",
+                "note": null,
+                "parameters": {
+                    "AWIPSidentifier": [
+                        "WSWWCZ"
+                    ],
+                    "WMOidentifier": [
+                        "WWAK42 PAFG 261928"
+                    ],
+                    "NWSheadline": [
+                        "WINTER WEATHER ADVISORY IN EFFECT FROM 3 PM FRIDAY TO 9 AM AKST SATURDAY"
+                    ],
+                    "BLOCKCHANNEL": [
+                        "EAS",
+                        "NWEM",
+                        "CMAS"
+                    ],
+                    "VTEC": [
+                        "/O.NEW.PAFG.WW.Y.0101.261128T0000Z-261128T1800Z/"
+                    ],
+                    "eventEndingTime": [
+                        "2026-11-28T09:00:00-09:00"
+                    ]
+                },
+                "scope": "Public",
+                "code": "IPAWSv1.0",
+                "language": "en-US",
+                "web": "http://www.weather.gov",
+                "eventCode": {
+                    "SAME": [
+                        "NWS"
+                    ],
+                    "NationalWeatherService": [
+                        "WWY"
                     ]
                 }
             }
         }
     ],
     "title": "Current watches, warnings, and advisories for Alaska",
-    "updated": "2026-11-26T12:41:18+00:00"
+    "updated": "2026-11-27T07:19:23+00:00"
 }

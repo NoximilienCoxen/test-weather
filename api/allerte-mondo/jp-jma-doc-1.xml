@@ -2,22 +2,22 @@
 <Report xmlns="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx="http://xml.kishou.go.jp/jmaxml1/" xmlns:jmx_add="http://xml.kishou.go.jp/jmaxml1/addition1/">
 <Control>
 <Title>気象警報・注意報（Ｈ２７）</Title>
-<DateTime>2026-11-26T12:28:51Z</DateTime>
+<DateTime>2026-11-27T07:22:05Z</DateTime>
 <Status>通常</Status>
-<EditorialOffice>石垣島地方気象台</EditorialOffice>
-<PublishingOffice>石垣島地方気象台</PublishingOffice>
+<EditorialOffice>山形地方気象台</EditorialOffice>
+<PublishingOffice>山形地方気象台</PublishingOffice>
 </Control>
 <Head xmlns="http://xml.kishou.go.jp/jmaxml1/informationBasis1/">
-<Title>八重山地方気象警報・注意報</Title>
-<ReportDateTime>2026-11-26T21:28:00+09:00</ReportDateTime>
-<TargetDateTime>2026-11-26T21:28:00+09:00</TargetDateTime>
+<Title>山形県気象警報・注意報</Title>
+<ReportDateTime>2026-11-27T16:22:00+09:00</ReportDateTime>
+<TargetDateTime>2026-11-27T16:22:00+09:00</TargetDateTime>
 <EventID/>
 <InfoType>発表</InfoType>
 <Serial/>
 <InfoKind>気象警報・注意報</InfoKind>
 <InfoKindVersion>1.2_2</InfoKindVersion>
 <Headline>
-<Text>八重山地方では、竜巻などの激しい突風や落雷に注意してください。</Text>
+<Text>山形県では、竜巻などの激しい突風や落雷に注意してください。</Text>
 <Information type="気象警報・注意報（府県予報区等）">
 <Item>
 <Kind>
@@ -26,8 +26,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>八重山地方</Name>
-<Code>474000</Code>
+<Name>山形県</Name>
+<Code>060000</Code>
 </Area>
 </Areas>
 </Item>
@@ -40,8 +40,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>石垣島地方</Name>
-<Code>474010</Code>
+<Name>村山</Name>
+<Code>060010</Code>
 </Area>
 </Areas>
 </Item>
@@ -52,8 +52,32 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>与那国島地方</Name>
-<Code>474020</Code>
+<Name>置賜</Name>
+<Code>060020</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>庄内</Name>
+<Code>060030</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>最上</Name>
+<Code>060040</Code>
 </Area>
 </Areas>
 </Item>
@@ -66,8 +90,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>石垣市</Name>
-<Code>474011</Code>
+<Name>東南村山</Name>
+<Code>060011</Code>
 </Area>
 </Areas>
 </Item>
@@ -78,8 +102,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>竹富町</Name>
-<Code>474012</Code>
+<Name>北村山</Name>
+<Code>060012</Code>
 </Area>
 </Areas>
 </Item>
@@ -90,8 +114,68 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>与那国島地方</Name>
-<Code>474020</Code>
+<Name>西村山</Name>
+<Code>060013</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>東南置賜</Name>
+<Code>060021</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>西置賜</Name>
+<Code>060022</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>庄内北部</Name>
+<Code>060031</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>庄内南部</Name>
+<Code>060032</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象情報／府県予報区・細分区域等">
+<Area>
+<Name>最上</Name>
+<Code>060040</Code>
 </Area>
 </Areas>
 </Item>
@@ -104,8 +188,8 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>石垣市</Name>
-<Code>4720700</Code>
+<Name>山形市</Name>
+<Code>0620100</Code>
 </Area>
 </Areas>
 </Item>
@@ -116,8 +200,8 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>竹富町</Name>
-<Code>4738100</Code>
+<Name>米沢市</Name>
+<Code>0620200</Code>
 </Area>
 </Areas>
 </Item>
@@ -128,8 +212,392 @@
 </Kind>
 <Areas codeType="気象・地震・火山情報／市町村等">
 <Area>
-<Name>与那国町</Name>
-<Code>4738200</Code>
+<Name>鶴岡市</Name>
+<Code>0620300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>酒田市</Name>
+<Code>0620400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>新庄市</Name>
+<Code>0620500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>寒河江市</Name>
+<Code>0620600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>上山市</Name>
+<Code>0620700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>村山市</Name>
+<Code>0620800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>長井市</Name>
+<Code>0620900</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>天童市</Name>
+<Code>0621000</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>東根市</Name>
+<Code>0621100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>尾花沢市</Name>
+<Code>0621200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>南陽市</Name>
+<Code>0621300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>山辺町</Name>
+<Code>0630100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>中山町</Name>
+<Code>0630200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>河北町</Name>
+<Code>0632100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>西川町</Name>
+<Code>0632200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>朝日町</Name>
+<Code>0632300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>大江町</Name>
+<Code>0632400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>大石田町</Name>
+<Code>0634100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>金山町</Name>
+<Code>0636100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>最上町</Name>
+<Code>0636200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>舟形町</Name>
+<Code>0636300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>真室川町</Name>
+<Code>0636400</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>大蔵村</Name>
+<Code>0636500</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>鮭川村</Name>
+<Code>0636600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>戸沢村</Name>
+<Code>0636700</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>高畠町</Name>
+<Code>0638100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>川西町</Name>
+<Code>0638200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>小国町</Name>
+<Code>0640100</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>白鷹町</Name>
+<Code>0640200</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>飯豊町</Name>
+<Code>0640300</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>三川町</Name>
+<Code>0642600</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>庄内町</Name>
+<Code>0642800</Code>
+</Area>
+</Areas>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+</Kind>
+<Areas codeType="気象・地震・火山情報／市町村等">
+<Area>
+<Name>遊佐町</Name>
+<Code>0646100</Code>
 </Area>
 </Areas>
 </Item>
@@ -142,8 +610,8 @@
 </Kind>
 <Areas codeType="気象情報／府県予報区・細分区域等">
 <Area>
-<Name>八重山地方</Name>
-<Code>474000</Code>
+<Name>山形県</Name>
+<Code>060000</Code>
 </Area>
 </Areas>
 </Item>
@@ -158,27 +626,15 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
 <Area>
-<Name>八重山地方</Name>
-<Code>474000</Code>
+<Name>山形県</Name>
+<Code>060000</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -190,27 +646,15 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
 <Area>
-<Name>石垣島地方</Name>
-<Code>474010</Code>
+<Name>村山</Name>
+<Code>060010</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -220,27 +664,51 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
+<Area>
+<Name>置賜</Name>
+<Code>060020</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
 </Kind>
 <Area>
-<Name>与那国島地方</Name>
-<Code>474020</Code>
+<Name>庄内</Name>
+<Code>060030</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>最上</Name>
+<Code>060040</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -252,27 +720,15 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
 <Area>
-<Name>石垣市</Name>
-<Code>474011</Code>
+<Name>東南村山</Name>
+<Code>060011</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -282,27 +738,15 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
 <Area>
-<Name>竹富町</Name>
-<Code>474012</Code>
+<Name>北村山</Name>
+<Code>060012</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -312,27 +756,105 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
+<Area>
+<Name>西村山</Name>
+<Code>060013</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
 </Kind>
 <Area>
-<Name>与那国島地方</Name>
-<Code>474020</Code>
+<Name>東南置賜</Name>
+<Code>060021</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>西置賜</Name>
+<Code>060022</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>庄内北部</Name>
+<Code>060031</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>庄内南部</Name>
+<Code>060032</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+<FullStatus>全域</FullStatus>
+<EditingMark>0</EditingMark>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>最上</Name>
+<Code>060040</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 <FullStatus>全域</FullStatus>
@@ -344,27 +866,15 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
 <Area>
-<Name>石垣市</Name>
-<Code>4720700</Code>
+<Name>山形市</Name>
+<Code>0620100</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
@@ -372,27 +882,15 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
-<Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
-</Kind>
 <Area>
-<Name>竹富町</Name>
-<Code>4738100</Code>
+<Name>米沢市</Name>
+<Code>0620200</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
@@ -400,27 +898,527 @@
 <Kind>
 <Name>雷注意報</Name>
 <Code>14</Code>
-<Status>継続</Status>
-<LastKind>
-<Name>雷注意報</Name>
-<Code>14</Code>
-</LastKind>
+<Status>発表</Status>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Kind>
+<Area>
+<Name>鶴岡市</Name>
+<Code>0620300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
 <Kind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-<Status>解除</Status>
-<LastKind>
-<Name>波浪注意報</Name>
-<Code>16</Code>
-</LastKind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
 </Kind>
 <Area>
-<Name>与那国町</Name>
-<Code>4738200</Code>
+<Name>酒田市</Name>
+<Code>0620400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>新庄市</Name>
+<Code>0620500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>寒河江市</Name>
+<Code>0620600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>上山市</Name>
+<Code>0620700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>村山市</Name>
+<Code>0620800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>長井市</Name>
+<Code>0620900</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>天童市</Name>
+<Code>0621000</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>東根市</Name>
+<Code>0621100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>尾花沢市</Name>
+<Code>0621200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>南陽市</Name>
+<Code>0621300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>山辺町</Name>
+<Code>0630100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>中山町</Name>
+<Code>0630200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>河北町</Name>
+<Code>0632100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>西川町</Name>
+<Code>0632200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>朝日町</Name>
+<Code>0632300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>大江町</Name>
+<Code>0632400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>大石田町</Name>
+<Code>0634100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>金山町</Name>
+<Code>0636100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>最上町</Name>
+<Code>0636200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>舟形町</Name>
+<Code>0636300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>真室川町</Name>
+<Code>0636400</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>大蔵村</Name>
+<Code>0636500</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>鮭川村</Name>
+<Code>0636600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>戸沢村</Name>
+<Code>0636700</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>高畠町</Name>
+<Code>0638100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>川西町</Name>
+<Code>0638200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>小国町</Name>
+<Code>0640100</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>白鷹町</Name>
+<Code>0640200</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>飯豊町</Name>
+<Code>0640300</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>三川町</Name>
+<Code>0642600</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>庄内町</Name>
+<Code>0642800</Code>
+</Area>
+<ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Status>発表</Status>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Kind>
+<Area>
+<Name>遊佐町</Name>
+<Code>0646100</Code>
 </Area>
 <ChangeStatus>警報・注意報種別に変化有</ChangeStatus>
 </Item>
@@ -429,49 +1427,49 @@
 <TimeSeriesInfo>
 <TimeDefines>
 <TimeDefine timeId="1">
-<DateTime>2026-11-26T21:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>２６日夜遅く</Name>
-</TimeDefine>
-<TimeDefine timeId="2">
-<DateTime>2026-11-27T00:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>２７日未明</Name>
-</TimeDefine>
-<TimeDefine timeId="3">
-<DateTime>2026-11-27T03:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>２７日明け方</Name>
-</TimeDefine>
-<TimeDefine timeId="4">
-<DateTime>2026-11-27T06:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>２７日朝</Name>
-</TimeDefine>
-<TimeDefine timeId="5">
-<DateTime>2026-11-27T09:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>２７日昼前</Name>
-</TimeDefine>
-<TimeDefine timeId="6">
-<DateTime>2026-11-27T12:00:00+09:00</DateTime>
-<Duration>PT3H</Duration>
-<Name>２７日昼過ぎ</Name>
-</TimeDefine>
-<TimeDefine timeId="7">
 <DateTime>2026-11-27T15:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
 <Name>２７日夕方</Name>
 </TimeDefine>
-<TimeDefine timeId="8">
+<TimeDefine timeId="2">
 <DateTime>2026-11-27T18:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
 <Name>２７日夜のはじめ頃</Name>
 </TimeDefine>
-<TimeDefine timeId="9">
+<TimeDefine timeId="3">
 <DateTime>2026-11-27T21:00:00+09:00</DateTime>
 <Duration>PT3H</Duration>
 <Name>２７日夜遅く</Name>
+</TimeDefine>
+<TimeDefine timeId="4">
+<DateTime>2026-11-28T00:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>２８日未明</Name>
+</TimeDefine>
+<TimeDefine timeId="5">
+<DateTime>2026-11-28T03:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>２８日明け方</Name>
+</TimeDefine>
+<TimeDefine timeId="6">
+<DateTime>2026-11-28T06:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>２８日朝</Name>
+</TimeDefine>
+<TimeDefine timeId="7">
+<DateTime>2026-11-28T09:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>２８日昼前</Name>
+</TimeDefine>
+<TimeDefine timeId="8">
+<DateTime>2026-11-28T12:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>２８日昼過ぎ</Name>
+</TimeDefine>
+<TimeDefine timeId="9">
+<DateTime>2026-11-28T15:00:00+09:00</DateTime>
+<Duration>PT3H</Duration>
+<Name>２８日夕方</Name>
 </TimeDefine>
 </TimeDefines>
 <Item>
@@ -483,16 +1481,16 @@
 <SignificancyPart>
 <Base>
 <Significancy refID="1" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="2" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="3" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="4" type="雷危険度">
 <Name>注意報級</Name>
@@ -520,14 +1518,24 @@
 </Significancy>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Base>
 </SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
 </Property>
 </Kind>
 <Area>
-<Name>石垣市</Name>
-<Code>4720700</Code>
+<Name>山形市</Name>
+<Code>0620100</Code>
 </Area>
 </Item>
 <Item>
@@ -539,16 +1547,16 @@
 <SignificancyPart>
 <Base>
 <Significancy refID="1" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="2" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="3" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="4" type="雷危険度">
 <Name>注意報級</Name>
@@ -576,14 +1584,24 @@
 </Significancy>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Base>
 </SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
 </Property>
 </Kind>
 <Area>
-<Name>竹富町</Name>
-<Code>4738100</Code>
+<Name>米沢市</Name>
+<Code>0620200</Code>
 </Area>
 </Item>
 <Item>
@@ -595,16 +1613,16 @@
 <SignificancyPart>
 <Base>
 <Significancy refID="1" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="2" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="3" type="雷危険度">
-<Name>注意報級</Name>
-<Code>10</Code>
+<Name>注意報級未満</Name>
+<Code>00</Code>
 </Significancy>
 <Significancy refID="4" type="雷危険度">
 <Name>注意報級</Name>
@@ -632,14 +1650,2136 @@
 </Significancy>
 <Addition>
 <Note>竜巻</Note>
+<Note>ひょう</Note>
 </Addition>
 </Base>
 </SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
 </Property>
 </Kind>
 <Area>
-<Name>与那国町</Name>
-<Code>4738200</Code>
+<Name>鶴岡市</Name>
+<Code>0620300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>酒田市</Name>
+<Code>0620400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>新庄市</Name>
+<Code>0620500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>寒河江市</Name>
+<Code>0620600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>上山市</Name>
+<Code>0620700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>村山市</Name>
+<Code>0620800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>長井市</Name>
+<Code>0620900</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>天童市</Name>
+<Code>0621000</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>東根市</Name>
+<Code>0621100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>尾花沢市</Name>
+<Code>0621200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>南陽市</Name>
+<Code>0621300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>山辺町</Name>
+<Code>0630100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>中山町</Name>
+<Code>0630200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>河北町</Name>
+<Code>0632100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>西川町</Name>
+<Code>0632200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>朝日町</Name>
+<Code>0632300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>大江町</Name>
+<Code>0632400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>大石田町</Name>
+<Code>0634100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>金山町</Name>
+<Code>0636100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>最上町</Name>
+<Code>0636200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>舟形町</Name>
+<Code>0636300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>真室川町</Name>
+<Code>0636400</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>大蔵村</Name>
+<Code>0636500</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>鮭川村</Name>
+<Code>0636600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>戸沢村</Name>
+<Code>0636700</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>高畠町</Name>
+<Code>0638100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>川西町</Name>
+<Code>0638200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>小国町</Name>
+<Code>0640100</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>白鷹町</Name>
+<Code>0640200</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>飯豊町</Name>
+<Code>0640300</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>三川町</Name>
+<Code>0642600</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>庄内町</Name>
+<Code>0642800</Code>
+</Area>
+</Item>
+<Item>
+<Kind>
+<Name>雷注意報</Name>
+<Code>14</Code>
+<Property>
+<Type>危険度</Type>
+<SignificancyPart>
+<Base>
+<Significancy refID="1" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="2" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="3" type="雷危険度">
+<Name>注意報級未満</Name>
+<Code>00</Code>
+</Significancy>
+<Significancy refID="4" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="5" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="6" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="7" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="8" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Significancy refID="9" type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Addition>
+<Note>竜巻</Note>
+<Note>ひょう</Note>
+</Addition>
+</Base>
+</SignificancyPart>
+<SubsequentSignificancyPart>
+<Base>
+<Significancy type="雷危険度">
+<Name>注意報級</Name>
+<Code>10</Code>
+</Significancy>
+<Sentence>以後も注意報級</Sentence>
+</Base>
+</SubsequentSignificancyPart>
+</Property>
+</Kind>
+<Area>
+<Name>遊佐町</Name>
+<Code>0646100</Code>
 </Area>
 </Item>
 </TimeSeriesInfo>

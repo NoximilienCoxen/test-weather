@@ -33,9 +33,9 @@
          campionamento: str = 'settimanale'
          tecnica_campionamento: str = 'POLLnet - Linee Guida per il monitoraggio biologico ISPRA, 
          dati_disponibili: str = 'conte e concentrazioni polliniche giornaliere'
-         _updated: str = 'Thu, 26 Nov 2026 12:36:35 GMT'
+         _updated: str = 'Fri, 27 Nov 2026 07:40:13 GMT'
          _created: str = 'Wed, 16 Oct 2024 13:19:16 GMT'
-         _etag: str = '3b39e548f0c0952f00352c4628460c3efd7d142f'
+         _etag: str = 'baa876bc3c4dc3100e9f4f74958068d23b128156'
          _links: dict
            self: dict
              title: str = 'Pollini - Stazione di monitoraggio dei pollini'
@@ -122,9 +122,9 @@
              dati_disponibili: str = 'conte e concentrazioni polliniche giornaliere'
              foto: dict
                img_data: str = '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBAQFBAYFBQYJBgUGCQsIBgY
-             _updated: str = 'Thu, 26 Nov 2026 12:36:35 GMT'
+             _updated: str = 'Fri, 27 Nov 2026 07:40:13 GMT'
              _created: str = 'Wed, 16 Oct 2024 13:19:16 GMT'
-             _etag: str = '3b39e548f0c0952f00352c4628460c3efd7d142f'
+             _etag: str = 'baa876bc3c4dc3100e9f4f74958068d23b128156'
          letture: dict
            4176: dict
              GRAMINACEE: dict
@@ -10477,9 +10477,9 @@
                value: str = '55'
                classe: str = 'media'
              count: int = 0
-         _updated: str = 'Thu, 26 Nov 2026 12:36:38 GMT'
+         _updated: str = 'Fri, 27 Nov 2026 07:40:16 GMT'
          _created: str = 'Wed, 25 Nov 2026 13:20:08 GMT'
-         _etag: str = 'a034027affb1c64c062786159630d04fd24df332'
+         _etag: str = '56fbca186221642d1618dcdcf94e41bc293a6223'
          _links: dict
            self: dict
              title: str = 'Pollini - Bollettino dati'
@@ -10521,7 +10521,7 @@
      ... {"value": 0.0}, "17/11/2026": {"value": 0.0}, "16/11/2026": {"value": 0.0}}}, "URTICACEE": {"famiglia": "B48019", "ordine": 35, "tipo": "POLLINI", "tendenza": "S",
      ... {"value": 0.0}, "17/11/2026": {"value": 0.0}, "16/11/2026": {"value": 0.0}}}, "URTICACEE": {"famiglia": "B48019", "ordine": 35, "tipo": "POLLINI", "tendenza": "S",
    forli: 6 occorrenze
-     ... 661965dda8bdab0a84b20585dca69b133e063"}, {"_id": "4186", "ordine": 11, "nome": "Forlì", "cod_istat": "40012", "indirizzo": "Forlì - Sede Arpae - Viale Salinatore, 20
+     ... b97e36d13871d706015e101d590efa943ebe0"}, {"_id": "4186", "ordine": 11, "nome": "Forlì", "cod_istat": "40012", "indirizzo": "Forlì - Sede Arpae - Viale Salinatore, 20
      ... id": "4186", "ordine": 11, "nome": "Forlì", "cod_istat": "40012", "indirizzo": "Forlì - Sede Arpae - Viale Salinatore, 20 nota: i campionatori di Arpae Emilia-Romagn
      ... con altezza compresa fra i 15 e i 20 m dal suolo", "area": "Urbana", "comune": "Forlì", "provincia": "Forlì-Cesena", "sigla_provincia": "FC", "gestore": "-", "loc":
      ... ra i 15 e i 20 m dal suolo", "area": "Urbana", "comune": "Forlì", "provincia": "Forlì-Cesena", "sigla_provincia": "FC", "gestore": "-", "loc": {"coordinates": [12.03
@@ -20902,9 +20902,9 @@
                value: str = '55'
                classe: str = 'media'
              count: int = 0
-         _updated: str = 'Thu, 26 Nov 2026 12:36:38 GMT'
+         _updated: str = 'Fri, 27 Nov 2026 07:40:16 GMT'
          _created: str = 'Wed, 25 Nov 2026 13:20:08 GMT'
-         _etag: str = 'a034027affb1c64c062786159630d04fd24df332'
+         _etag: str = '56fbca186221642d1618dcdcf94e41bc293a6223'
          _links: dict
            self: dict
              title: str = 'Pollini - Bollettino dati'
@@ -20952,11 +20952,11 @@
 
 == arpae-radice
    https://apps.arpae.it/REST/
-   HTTP 200  tipo=application/json  byte=17294
+   HTTP 200  tipo=application/json  byte=17426
    forma:
      _links: dict
        child: list
-         [169 elementi]
+         [170 elementi]
            href: str = 'contratti_trasparenza'
            title: str = 'Arpae - Contratti per la trasparenza (versione per il pubbl
    cipresso: 0 occorrenze
