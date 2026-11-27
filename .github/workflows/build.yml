@@ -285,6 +285,7 @@ jobs:
       # PDF? Una ricognizione prima di proporre una seconda fonte (CONTESTO §85).
       - name: Le allerte regionali dell'Emilia-Romagna
         continue-on-error: true
+        timeout-minutes: 10
         run: OUT=/tmp/ciout/allerte-er python3 scripts/probe_allerte_er.py
 
       - name: Quali modelli coprono l'Italia

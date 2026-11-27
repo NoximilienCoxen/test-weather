@@ -24,12 +24,16 @@ stato HTTP, tipo, byte e le prime righe. Non fa fallire il giro.
 
 import json
 import os
+import time
 import re
 import urllib.error
 import urllib.parse
 import urllib.request
 
 OUT = os.environ.get("OUT", "/tmp/ciout/allerte-er")
+# Il sito puo' rispondere a goccia: ogni richiesta ha 20 secondi, e la sonda
+# intera non piu' di otto minuti. Quello che resta fuori lo dice l'indice.
+SCADENZA = time.monotonic() + 8 * 60
 AGENTE = "Caelum/1.0 (+https://github.com/NoximilienCoxen/test-weather)"
 SITO = "https://allertameteo.regione.emilia-romagna.it"
 
@@ -67,9 +71,11 @@ URL = re.compile(r"""(?:href|src|action|data-url|url)\s*[=:]\s*["']([^"'<>\s]+)[
 
 
 def chiedi(url, accept="application/json, application/xml;q=0.9, text/html;q=0.8, */*;q=0.5"):
+    if time.monotonic() > SCADENZA:
+        return None, "saltato: sonda oltre gli otto minuti", b""
     req = urllib.request.Request(url, headers={"User-Agent": AGENTE, "Accept": accept})
     try:
-        with urllib.request.urlopen(req, timeout=25) as r:
+        with urllib.request.urlopen(req, timeout=20) as r:
             return r.status, r.headers.get("Content-Type", ""), r.read(3_000_000)
     except urllib.error.HTTPError as e:
         return e.code, e.headers.get("Content-Type", "") if e.headers else "", e.read(20000) if e.fp else b""
@@ -107,7 +113,7 @@ def main():
             if PAROLE.search(u):
                 trovati.append(urllib.parse.urljoin(url, u))
         # Gli script del sito: le chiamate alle API stanno spesso li' dentro.
-        for js in re.findall(r"""<script[^>]+src=["']([^"']+)["']""", testo):
+        for js in re.findall(r"""<script[^>]+src=["']([^"']+)["']""", testo)[:10]:
             js = urllib.parse.urljoin(url, js)
             if not js.startswith(SITO):
                 continue
