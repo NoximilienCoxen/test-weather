@@ -9019,3 +9019,45 @@ SoglieAvvisi)` riceve i numeri da `SogliePersonali` (`SoglieAvvisi.da`).
 - La schermata delle impostazioni, nello stato del test, passa da 2717 a 3012
   dp: tre righe nuove e, di norma, i selettori di UV e caldo aperti perche'
   i loro avvisi nell'app sono accesi.
+
+## 85. La neve in una scheda sua; l'allerta vento di Fontevivo
+
+**Il caso** (26 novembre 2026): a Sapporo la scheda della pioggia scorreva
+dentro di se'. La sezione "La neve" in fondo la portava a **689 dp** contro un
+tetto di 462; senza neve la pioggia e' a 459. Il test del tetto non aveva mai
+provato la pioggia con la neve.
+
+- **Scheda `SalaRoom.NEVE`** (`rooms/SalaNeve.kt`, ex `SezioneNeve.kt`):
+  centimetri attesi in tutta la previsione e fino a che quota, una colonnina per
+  giorno di neve, tre celle dell'ora scelta (al suolo, zero termico, quota neve
+  stimata), l'avvertenza sui bollettini valanghe. 364 dp nel caso Sapporo, 226
+  con la sola neve al suolo.
+- **Posizione fissa subito dopo la pioggia** (`SalaRoom.inOrdine`). Nell'enum
+  NEVE sta in fondo, dopo MARE, per non rinumerare `--ei sezione` della
+  galleria (`scripts/capture.sh`): l'ordine di sfoglio e l'indice dell'enum non
+  coincidono piu', e la colonna delle icone (`ColonnaScorciatoie`) ora riceve
+  l'elenco vero delle schede invece di `SalaRoom.entries` (prima mostrava il
+  mare anche dove non c'era). Quando la neve compare o sparisce il carosello
+  resta sulla stessa scheda (`LaunchedEffect(rooms)` in `SalaShell`); se sparisce
+  la neve che si guardava, si torna alla pioggia.
+- **Quando c'e'** (`serveLaNeve(previsione, indiceOra)`): neve prevista in un
+  giorno della previsione (da 0,1 cm) **o neve al suolo** adesso da 1 cm.
+  La neve al suolo e' `snow_depth` orario di Open-Meteo (metri, convertiti in
+  cm in `HourForecast.snowDepth`), chiesta da questo giro. **La quota del posto
+  non basta piu'**: prima sopra i mille metri la sezione c'era sempre, anche ad
+  agosto; come scheda sarebbe una pagina da sfogliare per dire "niente neve".
+  Con la neve al suolo il caso di montagna d'inverno e' coperto comunque.
+- **Il rimando nella pioggia**: "Neve in arrivo: 4,5 cm, vedi La neve ›",
+  toccabile, sulla stessa riga dell'etichetta LA SETTIMANA (la scheda e' a tre
+  punti dal tetto, una riga nuova la farebbe scorrere). Solo con neve prevista,
+  non per la sola neve al suolo.
+- Test: `SchedeNelTettoRenderTest` misura `pioggia-neve` (459), `neve` (364),
+  `neve-al-suolo` (226); `NeveTest` il criterio nuovo.
+
+**Fontevivo, allerta vento**: nel feed MeteoAlarm del 26 novembre (12:43 UTC)
+l'Emilia-Romagna aveva solo un'allerta gialla pioggia scaduta, nessun vento.
+L'app era coerente con la sua fonte; la scheda di Google veniva probabilmente
+dal sistema regionale. La sonda `scripts/probe_allerte_er.py` (passo "Le
+allerte regionali dell'Emilia-Romagna", in `ci-artifacts/api/allerte-er/`)
+guarda se Allerta Meteo Emilia-Romagna pubblica dati aperti per zona di allerta
+o solo PDF. Esito e proposta in §85.1.

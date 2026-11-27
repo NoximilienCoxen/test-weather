@@ -65,6 +65,7 @@ import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.caelumweather.data.SkyState
+import com.caelumweather.data.serveLaNeve
 import com.caelumweather.data.StatoAllerteUfficiali
 import com.caelumweather.data.WeatherAlert
 import com.caelumweather.data.WeatherAlertsRepository
@@ -81,6 +82,7 @@ import com.caelumweather.ui.motion.sistemaSenzaAnimazioni
 import com.caelumweather.ui.sala.rooms.SalaAriaScreen
 import com.caelumweather.ui.sala.rooms.SalaLunaScreen
 import com.caelumweather.ui.sala.rooms.SalaMareScreen
+import com.caelumweather.ui.sala.rooms.SalaNeveScreen
 import com.caelumweather.ui.sala.rooms.SalaOggiScreen
 import com.caelumweather.ui.sala.rooms.SalaPioggiaScreen
 import com.caelumweather.ui.sala.rooms.SalaUvScreen
@@ -137,9 +139,11 @@ fun SalaShell(
     scenaDAvvio: ScenaDAvvio? = null,
 ) {
     // Il mare c'e' solo dove c'e': la sua scheda, in fondo, compare quando
-    // arrivano i dati del mare e sparisce cambiando localita'.
+    // arrivano i dati del mare e sparisce cambiando localita'. La neve allo
+    // stesso modo, ma subito dopo la pioggia: vedi `SalaRoom.NEVE`.
     val conMare = state.mareMostrato != null
-    val rooms = remember(conMare) { SalaRoom.entries.filter { it != SalaRoom.MARE || conMare } }
+    val conNeve = remember(state.forecast, state.nowIndex) { serveLaNeve(state.forecast, state.nowIndex) }
+    val rooms = remember(conNeve, conMare) { SalaRoom.inOrdine(conNeve, conMare) }
     val scope = rememberCoroutineScope()
 
     // Se l'indizio "scorri in su" serve ancora: vedi `IndizioSfoglio`.
@@ -160,6 +164,16 @@ fun SalaShell(
             rooms.getOrNull(page)?.let(viewModel::showRoom)
             if (page > 0) impostazioni.setSaleSfogliate()
         }
+    }
+
+    // **Quando la neve compare o sparisce, si resta sulla stessa scheda.** La
+    // neve sta in mezzo: senza questo, chi guarda la luna e cambia localita'
+    // verso una senza neve si ritroverebbe sull'aria, perche' il carosello
+    // tiene il numero della pagina e non la scheda. Se sparisce proprio la
+    // neve che si stava guardando, si torna alla pioggia, che le sta accanto.
+    LaunchedEffect(rooms) {
+        val voluta = rooms.indexOf(state.room).takeIf { it >= 0 } ?: rooms.indexOf(SalaRoom.PIOGGIA)
+        if (voluta >= 0 && voluta != pagerState.currentPage) pagerState.scrollToPage(voluta)
     }
 
     // L'aggancio di verifica automatica: `--ei sezione`, riletto per le sale.
@@ -1044,8 +1058,10 @@ fun SalaShell(
                                         palette = palette,
                                         onSelectHour = viewModel::selectHour,
                                         onSelectDay = viewModel::selectDay,
+                                        onVaiAllaNeve = { vaiA(SalaRoom.NEVE) },
                                         movimento = !ferme,
                                     )
+                                    SalaRoom.NEVE -> SalaNeveScreen(state = state, palette = palette)
                                     SalaRoom.LUNA -> SalaLunaScreen(palette = palette, giorno = giornoLuna, movimento = !ferme)
                                     SalaRoom.ARIA -> SalaAriaScreen(state = state, palette = palette)
                                     SalaRoom.VENTO -> SalaVentoScreen(state = state, palette = palette, movimento = !ferme)
@@ -1155,6 +1171,7 @@ fun SalaShell(
                     .widthIn(max = LARGHEZZA_SALE)
                     .fillMaxSize(),
             ) { ColonnaScorciatoie(
+                sale = rooms,
                 corrente = rooms.getOrNull(pagerState.currentPage) ?: SalaRoom.OGGI,
                 posizione = posizione,
                 palette = palette,

@@ -131,4 +131,6 @@ data class HourlyDto(
     val snowfall: List<Double?> = emptyList(),
     /** Quota dello zero termico, in metri sul mare: da qui si stima dove nevica. */
     @SerialName("freezing_level_height") val freezingLevel: List<Double?> = emptyList(),
+    /** Neve al suolo, in **metri**: e' l'unita' di Open-Meteo per `snow_depth`. */
+    @SerialName("snow_depth") val snowDepth: List<Double?> = emptyList(),
 )

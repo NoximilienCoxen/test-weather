@@ -117,6 +117,13 @@ internal fun DrawScope.disegnaIconaViva(sala: SalaRoom, ink: Color, fase: Float,
             linea(9f, 5.8f + dy * 0.33f, 9f, 13.2f + dy * 0.33f)
             linea(14f, 6.5f + dy * 0.66f, 14f, 12.5f + dy * 0.66f)
         }
+        // Il fiocco che si apre: i bracci crescono all'arrivo e i rametti
+        // respirano. **Fermo**, come le altre: niente rotazione.
+        SalaRoom.NEVE -> disegnaFiocco(
+            ink,
+            braccio = 9f * (0.45f + 0.55f * comparsa),
+            rametto = 2.6f * comparsa * (1f + 0.15f * sin(fase * tau)),
+        )
         // Il mare: le onde scorrono, ciascuna col suo passo.
         SalaRoom.MARE -> {
             for ((k, y) in listOf(7f, 12f, 17f).withIndex()) {

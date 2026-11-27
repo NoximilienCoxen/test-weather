@@ -936,6 +936,8 @@ internal fun quandoInArrivo(avviso: WeatherAlert, momento: LocalDateTime): Strin
  */
 @Composable
 fun ColonnaScorciatoie(
+    /** Le schede che ci sono, nell'ordine del carosello: neve e mare non sempre. */
+    sale: List<SalaRoom>,
     corrente: SalaRoom,
     posizione: () -> Float,
     palette: SalaPalette,
@@ -947,7 +949,6 @@ fun ColonnaScorciatoie(
      *  sala lo stesso, senza rimbalzo, senza onda e senza colpetti. */
     movimento: Boolean = true,
 ) {
-    val sale = SalaRoom.entries
     // **Il rimbalzo del tocco, e l'onda che si lascia dietro.**
     //
     // Uno stato solo per sette icone, non sette: le animazioni non si
@@ -1148,7 +1149,7 @@ fun ColonnaScorciatoie(
                                 // finirebbe di crescere prima o dopo di quando
                                 // finisce di colorarsi, e si vedrebbe.
                                 val vicinanza =
-                                    (1f - abs(posizione() - sala.ordinal)).coerceIn(0f, 1f)
+                                    (1f - abs(posizione() - sale.indexOf(sala))).coerceIn(0f, 1f)
                                 val pieno = size.minDimension / 2f
                                 val riposo = RIPOSO.toPx()
                                 drawCircle(
@@ -1188,7 +1189,7 @@ fun ColonnaScorciatoie(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .height(BERSAGLIO)
-                        .offset(x = -(BERSAGLIO - 3.dp), y = BERSAGLIO * sala.ordinal)
+                        .offset(x = -(BERSAGLIO - 3.dp), y = BERSAGLIO * sale.indexOf(sala))
                         // Il riquadro qui sopra e' largo quanto la colonna,
                         // quarantotto punti, e dentro quei quarantotto "La
                         // settimana" starebbe come ci sta un piede in una
@@ -1261,6 +1262,26 @@ private fun IconaSala(sala: SalaRoom, ink: Color) {
     Canvas(modifier = Modifier.size(20.dp)) { disegnaIcona(sala, ink) }
 }
 
+/**
+ * Il fiocco della neve, centrato nel quadro di ventiquattro unita': sei bracci
+ * lunghi [braccio] e, a due terzi, due rametti lunghi [rametto] per braccio.
+ * Lo usano l'icona ferma e quella viva, che fa crescere i bracci all'arrivo.
+ */
+internal fun DrawScope.disegnaFiocco(ink: Color, braccio: Float, rametto: Float) {
+    val u = size.minDimension / 24f
+    val c = Offset(12f * u, 12f * u)
+    for (k in 0 until 6) {
+        val a = -PI.toFloat() / 2f + k * PI.toFloat() / 3f
+        val punta = c + Offset(cos(a), sin(a)) * (braccio * u)
+        drawLine(ink, c, punta, strokeWidth = 2f * u, cap = StrokeCap.Round)
+        val nodo = c + Offset(cos(a), sin(a)) * (braccio * 0.62f * u)
+        for (verso in listOf(-1f, 1f)) {
+            val b = a + verso * PI.toFloat() / 4f
+            drawLine(ink, nodo, nodo + Offset(cos(b), sin(b)) * (rametto * u), strokeWidth = 2f * u, cap = StrokeCap.Round)
+        }
+    }
+}
+
 internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
     val u = size.minDimension / 24f
     fun p(x: Float, y: Float) = Offset(x * u, y * u)
@@ -1327,6 +1348,8 @@ internal fun DrawScope.disegnaIcona(sala: SalaRoom, ink: Color) {
             linea(9f, 5.8f, 9f, 13.2f)
             linea(14f, 6.5f, 14f, 12.5f)
         }
+        // La neve: un fiocco a sei bracci, ognuno con due rametti.
+        SalaRoom.NEVE -> disegnaFiocco(ink, braccio = 9f, rametto = 2.6f)
         // Il mare: tre onde una sopra l'altra.
         SalaRoom.MARE -> {
             for ((k, y) in listOf(7f, 12f, 17f).withIndex()) {

@@ -128,7 +128,7 @@ class WeatherRepository(
                 "relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_gusts_10m," +
                 "wind_direction_10m,uv_index,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high," +
                 "pressure_msl,visibility," +
-                "rain,snowfall,freezing_level_height"
+                "rain,snowfall,freezing_level_height,snow_depth"
 
         const val DAILY_VARS =
             "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max," +
@@ -312,6 +312,8 @@ fun OpenMeteoResponse.toForecast(place: Place): Forecast {
             rain = hourly.rain.at(i),
             snowfall = hourly.snowfall.at(i),
             freezingLevel = hourly.freezingLevel.at(i),
+            // Open-Meteo la da' in metri; qui si tiene in centimetri, come la neve che cade.
+            snowDepth = hourly.snowDepth.at(i)?.let { it * 100.0 },
         )
     }.orEmpty()
 

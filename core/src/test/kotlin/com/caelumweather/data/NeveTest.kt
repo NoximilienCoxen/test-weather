@@ -69,10 +69,25 @@ class NeveTest {
     }
 
     @Test
-    fun `la sezione c'e' con la neve o in quota, non in pianura asciutta`() {
+    fun `la scheda c'e' con neve prevista o al suolo, non per la sola quota`() {
         assertTrue(serveLaNeve(previsione(3.0, { 1500.0 }, quota = 50.0)))
-        assertTrue(serveLaNeve(previsione(0.0, { 3000.0 }, quota = 1663.0)))
+        // Agosto a Cortina: montagna, ma niente neve ne' prevista ne' a terra.
+        assertEquals(false, serveLaNeve(previsione(0.0, { 3000.0 }, quota = 1663.0)))
         assertEquals(false, serveLaNeve(previsione(0.0, { 3000.0 }, quota = 50.0)))
         assertEquals(false, serveLaNeve(null))
+    }
+
+    @Test
+    fun `la neve al suolo si legge all'ora di adesso e conta da un centimetro`() {
+        fun alSuolo(cm: (Int) -> Double?) = previsione(0.0, { 3000.0 }, quota = 1663.0).let { p ->
+            val ore = p.allHours.mapIndexed { h, o -> o.copy(snowDepth = cm(h)) }
+            p.copy(allHours = ore, hours = ore)
+        }
+        val sciolta = alSuolo { h -> if (h < 12) 30.0 else 0.0 }
+        assertEquals(30.0, neveAlSuolo(sciolta, 8)!!, 0.0)
+        assertTrue(serveLaNeve(sciolta, 8))
+        assertEquals(false, serveLaNeve(sciolta, 15))
+        assertEquals(false, serveLaNeve(alSuolo { 0.4 }, 10))
+        assertEquals(false, serveLaNeve(alSuolo { null }, 10))
     }
 }

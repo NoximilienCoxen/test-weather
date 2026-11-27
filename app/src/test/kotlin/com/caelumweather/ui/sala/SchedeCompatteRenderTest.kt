@@ -17,7 +17,6 @@ import com.caelumweather.data.parseMare
 import com.caelumweather.prefs.TempUnit
 import com.caelumweather.ui.sala.rooms.GraficoGiornata
 import com.caelumweather.ui.sala.rooms.SezioneMare
-import com.caelumweather.ui.sala.rooms.SezioneNeve
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -113,26 +112,5 @@ class SchedeCompatteRenderTest {
             SezioneMare(ora = ora, unita = TempUnit.CELSIUS, palette = palette, movimento = false, mare = mare)
         }
         assertTrue("mare alto $alta dp", alta - 48f < 330f)
-    }
-
-    @Test
-    fun `la neve sta in una fila`() {
-        // Il file vero delle Dolomiti era di un giorno asciutto: la fila si
-        // vede solo con giorni di neve, quindi la previsione e' scritta qui.
-        val oggi = java.time.LocalDate.of(2026, 12, 3)
-        val cm = listOf(0.0, 4.0, 18.0, 7.0, 0.0, 2.0, 0.0)
-        val previsione = com.caelumweather.data.Forecast(
-            current = com.caelumweather.data.CurrentWeather(),
-            days = cm.mapIndexed { i, c -> com.caelumweather.data.DayForecast(oggi.plusDays(i.toLong()), listOf("OGGI", "VEN", "SAB", "DOM", "LUN", "MAR", "MER")[i], snowfallSum = c) },
-            allHours = (0 until 7 * 24).map { h ->
-                HourForecast(time = oggi.atStartOfDay().plusHours(h.toLong()), snowfall = if (cm[h / 24] > 0 && h % 24 in 6..12) cm[h / 24] / 7 else 0.0, freezingLevel = 1300.0 + 40 * (h % 24))
-            },
-            elevation = 1450.0,
-        )
-        val palette = salaPalette(dk = 0f, crepuscolo = 0f, chiusura = 0f)
-        val alta = disegna("neve") {
-            SezioneNeve(previsione = previsione, zeroTermicoOra = 1450.0, unita = TempUnit.CELSIUS, palette = palette)
-        }
-        assertTrue("neve alta $alta dp", alta - 48f < 260f)
     }
 }

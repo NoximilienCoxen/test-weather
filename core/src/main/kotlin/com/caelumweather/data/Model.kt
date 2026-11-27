@@ -98,6 +98,8 @@ data class HourForecast(
     val snowfall: Double? = null,
     /** Quota dello zero termico in metri sul mare: vedi [quotaNeve]. */
     val freezingLevel: Double? = null,
+    /** Neve al suolo in centimetri (`snow_depth`, convertita dai metri dell'API). */
+    val snowDepth: Double? = null,
 )
 
 data class Forecast(
