@@ -1,21 +1,33 @@
+sviluppatori.html	200	text/html;charset=UTF-8	118148 byte	https://allertameteo.regione.emilia-romagna.it/sviluppatori	sviluppatori.html
+    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Guida per gli sviluppatori - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible"
+note-legali.html	200	text/html;charset=UTF-8	107546 byte	https://allertameteo.regione.emilia-romagna.it/note-legali	note-legali.html
+    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Note legali - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edg
 home.html	200	text/html;charset=UTF-8	228325 byte	https://allertameteo.regione.emilia-romagna.it/	home.html
     <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Home - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 allerte-bollettini.html	200	text/html;charset=UTF-8	136395 byte	https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini	allerte-bollettini.html
     <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Allerte e Bollettini Meteo - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible"
 allerte-bollettini-2.html	200	text/html;charset=UTF-8	136621 byte	https://allertameteo.regione.emilia-romagna.it/web/guest/allerte-e-bollettini	allerte-bollettini-2.html
     <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Allerte e Bollettini Meteo - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible"
-open-data.html	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/open-data	-
-    
-dati-aperti.html	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/dati-aperti	-
-    
-zone-allerta.html	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/zone-di-allerta	-
-    
-api-allerte.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-allerte	-
-    
-api-allerta-oggi.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-allerta-oggi	api-allerta-oggi.html
+open-data.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/open-data	open-data.html
     <!DOCTYPE html> <html lang="it"> <head> <title>404 - Contenuto non trovato</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
-api-stato-allerta.json	200	application/json;charset=UTF-8	3385 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-stato-allerta	api-stato-allerta.json
-    [{"area":"A1","eventi":"idraulica:green,idrogeologica:green,temporali:green,vento:green,temperature-estreme:green,neve:green,ghiaccio-pioggia-gela:green,stato-mare:white,mareggiate:white"},{"area":"A2","eventi":"idraulica:green,idrogeologica:green,temporali:green,vento:green,temperature-estreme:gree
+dati-aperti.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/dati-aperti	dati-aperti.html
+    <!DOCTYPE html> <html lang="it"> <head> <title>404 - Contenuto non trovato</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
+zone-allerta.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/zone-di-allerta	zone-allerta.html
+    <!DOCTYPE html> <html lang="it"> <head> <title>404 - Contenuto non trovato</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
+rss-allerte-bollettini.xml	200	application/atom+xml	26253 byte	https://allertameteo.regione.emilia-romagna.it/o/compila-allerta-portlet/feed?feed=allerte-bollettini	rss-allerte-bollettini.xml
+    <?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Allerte e bollettini di vigilanza</title><link href="https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini" /><updated>2026-11-26T11:45:52Z</updated><author><name>Regione Emilia-Romagna</name></autho
+api-stato-allerta-oggi.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-stato-allerta	-
+    
+api-stato-allerta-data.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-stato-allerta?data=2026-11-26	-
+    
+api-stato-allerta-domani.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-stato-allerta?giorno=domani	-
+    
+api-allerte.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-allerte	-
+    
+api-allerta-oggi.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-allerta-oggi	-
+    
+api-stato-allerta.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-stato-allerta	-
+    
 api-bollettini.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-bollettini	api-bollettini.html
     <!DOCTYPE html> <html lang="it"> <head> <title>404 - Contenuto non trovato</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
 api-documenti.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/o/api/allerta/get-documenti	api-documenti.html
@@ -34,123 +46,123 @@ dpc-repo.json	200	application/json; charset=utf-8	7126 byte	https://api.github.c
     [{"name":".gitattributes","path":".gitattributes","sha":"f5d209ec80178c12d5226ad7e80961978d48113e","size":146,"url":"https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica/contents/.gitattributes?ref=master","html_url":"https://github.com/pcm-dpc/DPC-Bollettini-Critici
 dpc-avvisi-repo.json	200	application/json; charset=utf-8	154245 byte	https://api.github.com/search/repositories?q=org:pcm-dpc	dpc-avvisi-repo.json
     {"total_count":27,"incomplete_results":false,"items":[{"id":245630760,"node_id":"MDEwOlJlcG9zaXRvcnkyNDU2MzA3NjA=","name":"COVID-19","full_name":"pcm-dpc/COVID-19","private":false,"owner":{"login":"pcm-dpc","id":61385480,"node_id":"MDEyOk9yZ2FuaXphdGlvbjYxMzg1NDgw","avatar_url":"https://avatars.gith
-trovato-00.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/homepage	-
+trovato-00.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/sviluppatori	-
     
-trovato-01.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/img/logo.png	-
+trovato-01.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it	-
     
-trovato-02.html	200	text/html;charset=UTF-8	228325 byte	https://allertameteo.regione.emilia-romagna.it	trovato-02.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Home - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-trovato-03.txt	200	text/css;charset=UTF-8	235355 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/allerta/bootstrap.css?v=0.4	trovato-03.txt
-    /*! * Bootstrap v4.1.3 (https://getbootstrap.com/) * Copyright 2011-2018 The Bootstrap Authors * Copyright 2011-2018 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE) */ :root { --blue: #0C6AAF; --indigo: #6610f2; --purple: #DED6FF; --pink: #e83e8c; --red: #B
-trovato-04.txt	200	text/css;charset=UTF-8	22610 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/allerta/swiper.css?v=0.4	trovato-04.txt
-    /** * Swiper 4.4.6 * Most modern mobile touch slider and framework with hardware accelerated transitions * http://www.idangero.us/swiper/ * * Copyright 2014-2018 Vladimir Kharlampidi * * Released under the MIT License * * Released on: December 19, 2018 */ .swiper-container { margin: 0 auto; position
-trovato-05.txt	200	text/css;charset=UTF-8	20012 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/allerta/leaflet.css?v=0.4	trovato-05.txt
-    /* required styles */ .leaflet-pane, .leaflet-tile, .leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-tile-container, .leaflet-pane > svg, .leaflet-pane > canvas, .leaflet-zoom-box, .leaflet-image-layer, .leaflet-layer { position: absolute; left: 0; top: 0; } .leaflet-container { overflow: hidd
-trovato-06.txt	200	text/css;charset=UTF-8	218607 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/allerta/allerta-meteo.css?v=0.8	trovato-06.txt
-    @charset "UTF-8"; /*! * Allerta Meteo Front-end * --- */ .share-component__item, .breadcrumb-item, .breadcrumb-item a { text-decoration: none !important; } .link-list-link, .footer a, .journal-content-article a { text-decoration: underline; } /* * Custom Mixins */ @import url("https://fonts.googleap
-trovato-07.txt	200	text/css;charset=UTF-8	170308 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/icons/style.css?v=0.5	trovato-07.txt
-    @charset "UTF-8"; @font-face { font-family: "allerta-meteo"; src: url("fonts/allerta-meteo.eot?tb2d3x"); src: url("fonts/allerta-meteo.eot?tb2d3x#iefix") format("embedded-opentype"), url("fonts/allerta-meteo.ttf?tb2d3x") format("truetype"), url("fonts/allerta-meteo.woff?tb2d3x") format("woff"), url(
-trovato-08.txt	200	application/javascript	87533 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/js/jquery-3.7.1.min.js	trovato-08.txt
-    /*! jQuery v3.7.1 | (c) OpenJS Foundation and other contributors | jquery.org/license */ !function(e,t){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error("jQuery requires a window with a document");retur
-trovato-09.xml	200	image/svg+xml	345194 byte	https://allertameteo.regione.emilia-romagna.it/o/admin-theme/images/clay/icons.svg	trovato-09.xml
-    <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="accessibility" viewBox="0 0 512 512"><path class="lexicon-icon-outlin
-trovato-10.xml	200	image/svg+xml	345194 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/images/clay/icons.svg	trovato-10.xml
-    <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="accessibility" viewBox="0 0 512 512"><path class="lexicon-icon-outlin
-trovato-11.html	200	text/html;charset=UTF-8	226923 byte	https://allertameteo.regione.emilia-romagna.it/en/	trovato-11.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="en-GB"> <head> <title>Home - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-trovato-12.txt	200	image/vnd.microsoft.icon	1923 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/images/favicon.ico	trovato-12.txt
-             h  6       5  �     �   �  (                                                                                                                                                                                                             ���         ������7���"              
-trovato-13.txt	200	text/css;charset=UTF-8	676973 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/clay.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1790764594000	trovato-13.txt
-    /** * Clay 3.124.0 * * SPDX-FileCopyrightText: © 2020 Liferay, Inc. <https://liferay.com> * SPDX-FileCopyrightText: © 2020 Contributors to the project Clay <https://github.com/liferay/clay/graphs/contributors> * * SPDX-License-Identifier: BSD-3-Clause */ /** * Bootstrap v4.4.1 * * SPDX-FileCopyright
-trovato-14.txt	200	text/css;charset=UTF-8	1595 byte	https://allertameteo.regione.emilia-romagna.it/o/asset-publisher-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909480000	trovato-14.txt
-    .portlet-asset-publisher .asset-content,.portlet-asset-publisher .asset-full-content{word-wrap:break-word}.portlet-asset-publisher .asset-content img,.portlet-asset-publisher .asset-full-content img{max-width:100%}.portlet-asset-publisher .asset-links .list-group-item:last-child{border-bottom-width:
-trovato-15.txt	200	text/css;charset=UTF-8	340 byte	https://allertameteo.regione.emilia-romagna.it/o/commerce-product-asset-categories-navigation-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909548000	trovato-15.txt
-    .lfr-asset-category-list-container{cursor:pointer}.lfr-asset-category-list ul{list-style:none;margin-top:4px;padding:0}.lfr-asset-category-list li{list-style-type:none;margin:0;padding:0 0 3px 16px}.lfr-asset-category-list span{padding-left:3px}.lfr-asset-category-list a.selected{background-color:#e
-trovato-16.txt	200	text/css;charset=UTF-8	2994 byte	https://allertameteo.regione.emilia-romagna.it/o/journal-content-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909692000	trovato-16.txt
-    .portlet-journal-content .asset-links .list-group-item:last-child{border-bottom-width:0}.portlet-journal-content .journal-content-article{word-wrap:break-word}.portlet-journal-content .journal-content-article blockquote{margin:1em 40px}.portlet-journal-content .journal-content-article img,.portlet-j
-trovato-17.txt	200	text/css;charset=UTF-8	4093 byte	https://allertameteo.regione.emilia-romagna.it/o/portal-search-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909766000	trovato-17.txt
-    html:not(#__):not(#___) .portlet-date-facet .cadmin .lfr-autorow-controls,html:not(#__):not(#___) .portlet-modified-facet .cadmin .lfr-autorow-controls,html:not(#__):not(#___) .portlet-search-options .cadmin .lfr-autorow-controls,html:not(#__):not(#___) .portlet-sort .cadmin .lfr-autorow-controls{di
-trovato-18.txt	200	text/css;charset=UTF-8	6646 byte	https://allertameteo.regione.emilia-romagna.it/o/product-navigation-product-menu-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909794000	trovato-18.txt
-    html:not(#__):not(#___) .cadmin.copy-page-modal .modal-content{min-height:344px}html:not(#__):not(#___) .cadmin .pages-tree{margin-bottom:calc(72px + 16px)}html:not(#__):not(#___) .cadmin .pages-tree .treeview-dropping-middle{background-color:rgba(255,255,255,.06)}html:not(#__):not(#___) .cadmin .pa
-trovato-19.txt	200	text/css;charset=UTF-8	155 byte	https://allertameteo.regione.emilia-romagna.it/o/product-navigation-user-personal-bar-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909794000	trovato-19.txt
-    .portlet-user-personal-bar .personal-menu-dropdown .sticker-bottom-right.sticker-outside{bottom:-0.5rem;right:-0.5rem}/*# sourceMappingURL=main.css.map */
-trovato-20.txt	200	text/css;charset=UTF-8	561 byte	https://allertameteo.regione.emilia-romagna.it/o/site-navigation-menu-web/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1739909818000	trovato-20.txt
-    .portlet-navigation .nav-link .layout-logo{max-height:1rem;max-width:2rem}.portlet-navigation .navigation-menu__submenu{cursor:default}.portlet-navigation .navigation-menu__submenu.dropdown-item:hover{background-color:rgba(0,0,0,0);color:#6b6c7e}.portlet-navigation .nav-pills>li>a{margin-bottom:2px}
-trovato-21.txt	200		0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/images	-
+trovato-02.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/js/jquery-3.7.1.min.js	-
     
-trovato-22.txt	200		0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme	-
+trovato-03.html	200	text/html;charset=UTF-8	117900 byte	https://allertameteo.regione.emilia-romagna.it/en/sviluppatori	trovato-03.html
+    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="en-GB"> <head> <title>For developers - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=
+trovato-04.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/images	-
     
-trovato-23.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/group/guest/~/control_panel/manage?p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view	trovato-23.html
+trovato-05.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme	-
+    
+trovato-06.html	404	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/group/guest/~/control_panel/manage?p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view	trovato-06.html
     <!DOCTYPE html> <html lang="it"> <head> <title>404 - Contenuto non trovato</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
-trovato-24.html	200	text/html;charset=UTF-8	114996 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/authorize	trovato-24.html
+trovato-07.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/authorize	-
+    
+trovato-08.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/redirect	-
+    
+trovato-09.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/introspect	-
+    
+trovato-10.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/token	-
+    
+trovato-11.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js	-
+    
+trovato-12.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini	-
+    
+trovato-13.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini-valanghe	-
+    
+trovato-14.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/informativa-allerte-e-bollettini	-
+    
+trovato-15.html	200	text/html;charset=UTF-8	108396 byte	https://allertameteo.regione.emilia-romagna.it/il-progetto-allerte-emilia-romagna	trovato-15.html
+    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Il progetto Allerta Meteo Emilia-Romagna - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-U
+trovato-16.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/combo?browserId=chrome&amp;minifierType=js&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;AllertaLeftMenuPortlet:%2Fo%2Fit.eng.allerta.header%2Fjs%2Fsearch.js&amp;t=1790764842000	-
+    
+trovato-17.html	200	text/html;charset=UTF-8	228878 byte	https://allertameteo.regione.emilia-romagna.it/web/guest/homepage/	trovato-17.html
     <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Home - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-trovato-25.html	200	text/html	195 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/redirect	trovato-25.html
-    <html><head><title>Liferay OAuth2 Redirect</title></head><body><script type="text/javascript">window.postMessage({"code":"","state":"","error":""}, document.location.href);</script></body></html>
-trovato-26.html	405	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/introspect	trovato-26.html
-    <!DOCTYPE html> <html lang="it"> <head> <title>405 - Metodo non consentito</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
-trovato-27.html	405	text/html	846 byte	https://allertameteo.regione.emilia-romagna.it/o/oauth2/token	trovato-27.html
-    <!DOCTYPE html> <html lang="it"> <head> <title>405 - Metodo non consentito</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothi
-trovato-28.txt	200		0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js	-
+trovato-18.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/sviluppatori?p_p_id=AllertaHeaderPortlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&_AllertaHeaderPortlet_cmd=get_comuni_emilia	-
     
-trovato-29.txt	200	text/css;charset=UTF-8	1191669 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/main.css?browserId=other&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;t=1790764594000	trovato-29.txt
-    /** * Clay 3.124.0 * * SPDX-FileCopyrightText: © 2020 Liferay, Inc. <https://liferay.com> * SPDX-FileCopyrightText: © 2020 Contributors to the project Clay <https://github.com/liferay/clay/graphs/contributors> * * SPDX-License-Identifier: BSD-3-Clause */ /** * Bootstrap v4.4.1 * * SPDX-FileCopyright
-trovato-30.txt	200	text/css;charset=UTF-8	83 byte	https://allertameteo.regione.emilia-romagna.it/o/frontend-js-aui-web/alloy_ui.css?&mac=favIEq7hPo8AEd6k+N5OVADEEls=&browserId=other&languageId=it_IT&themeId=allertatheme_WAR_allertatheme	trovato-30.txt
-    #yui3-css-stamp { position: absolute !important; visibility: hidden !important; }
-trovato-31.txt	200	image/vnd.microsoft.icon	1923 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/../img/favicon.ico	trovato-31.txt
-             h  6       5  �     �   �  (                                                                                                                                                                                                             ���         ������7���"              
-trovato-32.html	200	text/html;charset=UTF-8	136407 byte	https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini	trovato-32.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Allerte e Bollettini Meteo - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible"
-trovato-33.html	200	text/html;charset=UTF-8	133234 byte	https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini-valanghe	trovato-33.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Allerte e Bollettini Valanghe - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatibl
-trovato-34.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/informativa-allerte-e-bollettini	-
+trovato-19.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/combo?browserId=chrome&amp;minifierType=js&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;AllertaHeaderPortlet:%2Fo%2Fit.eng.allerta.header%2Fjs%2Fsearch.js%3Fv%3D1.2&amp;t=1790764842000	-
     
-trovato-35.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/il-progetto-allerte-emilia-romagna	-
+trovato-20.xml	200	application/atom+xml	26253 byte	https://allertameteo.regione.emilia-romagna.it/o/compila-allerta-portlet/feed?feed=allerte-bollettini	trovato-20.xml
+    <?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>Allerte e bollettini di vigilanza</title><link href="https://allertameteo.regione.emilia-romagna.it/allerte-e-bollettini" /><updated>2026-11-26T11:45:52Z</updated><author><name>Regione Emilia-Romagna</name></autho
+trovato-21.txt	None	URLError: <urlopen error [Errno 111] Connection refused>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/compila-allerta-portlet/feed?feed=valanghe	-
     
-trovato-36.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/combo?browserId=other&amp;minifierType=js&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;AllertaLeftMenuPortlet:%2Fo%2Fit.eng.allerta.header%2Fjs%2Fsearch.js&amp;t=1790764594000	-
+trovato-22.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/compila-allerta-portlet/feed?feed=monitoraggi	-
     
-trovato-37.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/../img/logo-rer-xl--grey.png	-
+trovato-23.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/get-stato-allerta	-
     
-trovato-38.txt	200	image/png	31049 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/../img/logo-protezione-civile.png	trovato-38.txt
-    �PNG      IHDR  �  �   ���S    pHYs  .#  .#x�?v    IDATx�� �յ���( pb�l0��"�� �q� i�I��q�$�Q_� @b h�6O "�JdP�LqhA��� ��__uU[}���U�n��[���}oݺS������TWW3� �iPTڊ1V(qǊ���� ����AQ鱌�c�珀�*����ZF�:�3�>��������{euYq}Z�|��Z�p�[����s���J�?�.+�T���sP�"r_���͎ #΀��*7x-�2����)
-trovato-39.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/../img/logo-arpae.png	-
+trovato-24.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/xmlcap	-
     
-trovato-40.xml	200	image/svg+xml	668 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/img/social/x.svg	trovato-40.xml
-    <?xml version="1.0" encoding="UTF-8"?> <svg id="logosandtypes_com" data-name="logosandtypes com" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150"> <defs> <style> .cls-1 { fill: none; } </style> </defs> <g id="Layer_3" data-name="Layer 3"> <g id="Layer_2" data-name="Layer 2"> <path id="Layer_
-trovato-41.html	200	text/html;charset=UTF-8	228878 byte	https://allertameteo.regione.emilia-romagna.it/web/guest/homepage/	trovato-41.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Home - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-trovato-42.txt	200	image/png	40738 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/css/../img/logo.png	trovato-42.txt
-    �PNG      IHDR      �   !�΃   bKGD      �C�    pHYs       ��   tIME�8Zf�    iTXtComment     Created with GIMPd.e    IDATx� �m�Y����s�7Ko��$��'ٖm `���1� �L�4 ,:^ H7 ��t��$�@'�+V7 l�#� ��-<i�d�O�{қ�t����W�����s���t��}j�������jW��͘c �)p�(P�L�n:ۧ�O'�.��� sv��E;{����-�����悝>}�
-trovato-43.html	200	text/html;charset=UTF-8	3 byte	https://allertameteo.regione.emilia-romagna.it/homepage?p_p_id=AllertaHeaderPortlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&_AllertaHeaderPortlet_cmd=get_comuni_emilia	trovato-43.html
-    end
-trovato-44.html	400	text/html	844 byte	https://allertameteo.regione.emilia-romagna.it/combo?browserId=other&amp;minifierType=js&amp;themeId=allertatheme_WAR_allertatheme&amp;languageId=it_IT&amp;AllertaHeaderPortlet:%2Fo%2Fit.eng.allerta.header%2Fjs%2Fsearch.js%3Fv%3D1.2&amp;t=1790764594000	trovato-44.html
-    <!DOCTYPE html> <html lang="it"> <head> <title>400 - Richiesta non valida</title> <style type="text/css"> html, body { margin: 0; padding: 0; height: 100%; } body { font-family: Helvetica, Arial, Sans-Serif; background-color: #333; color: #fff; -moz-font-smoothing: antialiased; -webkit-font-smoothin
-trovato-45.html	200	text/html;charset=UTF-8	114178 byte	https://allertameteo.regione.emilia-romagna.it/web/guest/singola-allerta/-/asset_publisher/FZPQSb6AzKtJ/Allerta-Bollettino/id/5024273	trovato-45.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Bollettino di vigilanza 184/2026 valido dalle 00:00 del 27/11/2026: nessuna allerta. - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, s
-trovato-46.html	200	text/html;charset=UTF-8	101371 byte	https://allertameteo.regione.emilia-romagna.it/grafico-sensori?p_p_id=AllertaGraficoPortlet&p_p_lifecycle=0&_AllertaGraficoPortlet_mvcRenderCommandName=%2Fallerta%2Fanimazione%2Fgrafico	trovato-46.html
-    <!DOCTYPE html> <html class="ltr" dir="ltr" lang="it-IT"> <head> <title>Grafico sensori - Allerta Emilia Romagna</title> <meta charset="utf-8"> <meta name="viewport" content="minimum-scale=0.25"> <meta http-equiv="X-UA-Compatible" content="IE=edge" /> <meta content="t
-trovato-47.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Criticit%C3%A0_Idraulica.pdf/88f9c6f4-357f-48c6-a935-3eb1bd9c214f	trovato-47.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 44 0 R/MarkInfo<</Marked true>>/Metadata 428 0 R/ViewerPreferences 429 0 R>> endobj 2 0 obj <</Type/Pages/Count 4/Kids[ 3 0 R 35 0 R 37 0 R 39 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5
-trovato-48.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Criticit%C3%A0_Idrogeologica.pdf/666ee168-bfcb-4c4a-a0a6-979485807bf4	trovato-48.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 42 0 R/MarkInfo<</Marked true>>/Metadata 346 0 R/ViewerPreferences 347 0 R>> endobj 2 0 obj <</Type/Pages/Count 4/Kids[ 3 0 R 28 0 R 30 0 R 39 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5
-trovato-49.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Criticit%C3%A0_Temporali.pdf/fd96a895-df83-4908-b2d2-273fd2f8f729	trovato-49.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 37 0 R/MarkInfo<</Marked true>>/Metadata 261 0 R/ViewerPreferences 262 0 R>> endobj 2 0 obj <</Type/Pages/Count 3/Kids[ 3 0 R 28 0 R 34 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS
-trovato-50.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Vento.pdf	trovato-50.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 32 0 R/MarkInfo<</Marked true>>/Metadata 407 0 R/ViewerPreferences 408 0 R>> endobj 2 0 obj <</Type/Pages/Count 3/Kids[ 3 0 R 23 0 R 29 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS
-trovato-51.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Neve.pdf	trovato-51.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 30 0 R/MarkInfo<</Marked true>>/Metadata 202 0 R/ViewerPreferences 203 0 R>> endobj 2 0 obj <</Type/Pages/Count 2/Kids[ 3 0 R 25 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS8 8 0 R
-trovato-52.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Pioggia_che_gela.pdf	trovato-52.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 26 0 R/MarkInfo<</Marked true>>/Metadata 156 0 R/ViewerPreferences 157 0 R>> endobj 2 0 obj <</Type/Pages/Count 1/Kids[ 3 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS8 8 0 R>>/Font
-trovato-53.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Temperature_Estreme.pdf	trovato-53.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 30 0 R/MarkInfo<</Marked true>>/Metadata 289 0 R/ViewerPreferences 290 0 R>> endobj 2 0 obj <</Type/Pages/Count 2/Kids[ 3 0 R 25 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS8 8 0 R
-trovato-54.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Stato_del_mare.pdf	trovato-54.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 28 0 R/MarkInfo<</Marked true>>/Metadata 213 0 R/ViewerPreferences 214 0 R>> endobj 2 0 obj <</Type/Pages/Count 1/Kids[ 3 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS8 8 0 R>>/Font
-trovato-55.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Criticit%C3%A0_Costiera.pdf/d4aa483b-8618-4c53-a58a-241d61727ab0	trovato-55.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 30 0 R/MarkInfo<</Marked true>>/Metadata 179 0 R/ViewerPreferences 180 0 R>> endobj 2 0 obj <</Type/Pages/Count 2/Kids[ 3 0 R 23 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5 0 R/GS8 8 0 R
-trovato-56.pdf	200	application/pdf	2000 byte	https://allertameteo.regione.emilia-romagna.it/documents/20181/1138904/Tabella_Scenari_Valanghe.pdf	trovato-56.pdf
-    %PDF-1.7 %���� 1 0 obj <</Type/Catalog/Pages 2 0 R/Lang(en-US) /StructTreeRoot 57 0 R/MarkInfo<</Marked true>>/Metadata 382 0 R/ViewerPreferences 383 0 R>> endobj 2 0 obj <</Type/Pages/Count 4/Kids[ 3 0 R 25 0 R 40 0 R 47 0 R] >> endobj 3 0 obj <</Type/Page/Parent 2 0 R/Resources<</ExtGState<</GS5 5
-trovato-57.txt	200	image/png	6767 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-previsioni/img/legend/rt_D_vento.png	trovato-57.txt
-    �PNG      IHDR  h      ���   bKGD � � �����    pHYs      ��~�  IDATx^�{XUU�ǿ�p� 8\TP��B��"b��"j:>�85]F��26j9���d�ԩ���X9y���(��B�Dq@���>g���rXZ ����y���Z��k���z���k��@��V�f�$��j���E@f�V�  �z=4����n��d2��tBh4��z��-*c��a�X��h��j���Z��b�X T*�P(�E�: �F# �|�6� 
-trovato-58.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-previsioni/img/legend/rt_P_piogge.png	-
+trovato-25.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/stato-valanghe	-
     
-trovato-59.txt	None	URLError: <urlopen error timed out>	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-previsioni/img/legend/rt_P_pressione.png	-
+trovato-26.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/get-bollettino-monitoraggio	-
+    
+trovato-27.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/badge.js	-
+    
+trovato-28.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d1180072\x26p_p_id\x3dAllertaBreadcrumbsPortlet\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dcolumn-1\x26p_p_col_pos\x3d0\x26p_p_col_count\x3d2\x26p_p_isolated\x3d1\x26currentURL\x3d\x252Fsviluppatori	-
+    
+trovato-29.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/https\x3a\x2f\x2fallertameteo\x2eregione\x2eemilia-romagna\x2eit\x2fweb\x2fguest\x2fhomepage\x2f	-
+    
+trovato-30.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d1180072\x26p_p_id\x3dAllertaHeaderPortlet\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dnull\x26p_p_col_pos\x3dnull\x26p_p_col_count\x3dnull\x26p_p_static\x3d1\x26p_p_isolated\x3d1\x26currentURL\x3d\x252Fsviluppatori	-
+    
+trovato-31.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d1180072\x26p_p_id\x3dAllertaLeftMenuPortlet\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dnull\x26p_p_col_pos\x3dnull\x26p_p_col_count\x3dnull\x26p_p_static\x3d1\x26p_p_isolated\x3d1\x26currentURL\x3d\x252Fsviluppatori	-
+    
+trovato-32.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-theme/js/main.js?browserId=chrome&amp;minifierType=js&amp;languageId=it_IT&amp;t=1790764842000	-
+    
+trovato-33.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/moment.min.js	-
+    
+trovato-34.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/moment-locale-it.js	-
+    
+trovato-35.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/swiper.min.js	-
+    
+trovato-36.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.theme.js?v=0.93	-
+    
+trovato-37.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/leaflet.js	-
+    
+trovato-38.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/leaflet-search.src.js?v=1.15	-
+    
+trovato-39.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/bootstrap-datetimepicker.js	-
+    
+trovato-40.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.aree-idro-new.js?v=1.3	-
+    
+trovato-41.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.comuni-new.js?v=1.4	-
+    
+trovato-42.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.aree-idro.js	-
+    
+trovato-43.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.comuni.js	-
+    
+trovato-44.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.regione.js	-
+    
+trovato-45.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.bacini.js	-
+    
+trovato-46.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.data.reticolo.js	-
+    
+trovato-47.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.aria.bootstrap-datetimepicker.js	-
+    
+trovato-48.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-config-new.js?v=1.3	-
+    
+trovato-49.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-config.js?v=1.8	-
+    
+trovato-50.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.leaflet-controls.js?ts=1795765967858	-
+    
+trovato-51.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-server-new.js?v=0.62g	-
+    
+trovato-52.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-server.js?v=0.42g	-
+    
+trovato-53.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario.js?v=0.9	-
+    
+trovato-54.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario-sensore.js?v=1.99	-
+    
+trovato-55.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario-precipitazioni.js?v=1.1	-
+    
+trovato-56.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario-pressione.js	-
+    
+trovato-57.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario-livellomare.js	-
+    
+trovato-58.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario-altezzaonda.js	-
+    
+trovato-59.txt	None	saltato: sonda oltre gli otto minuti	0 byte	https://allertameteo.regione.emilia-romagna.it/o/allerta-frontend-js/js/am.map-data-scenario-direzioneonda.js	-
     
